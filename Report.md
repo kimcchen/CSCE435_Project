@@ -104,9 +104,24 @@ We will use the Grace cluster on the TAMU HPRC.
         if rank is master
             sort last column in matrix
             
-            unshift matrix // matrix is now sorted in Column-Major order
-            output matrix
+            unshift matrix // matrix should now be sorted in Column-Major order
             
+            for i: 1 -> num_procs
+                MPI send matrix columns i * colsPerWorker to (i + 1) * colsPerWorker -  to process i
+            end for
+        if rank is not master
+            MPI receive matrix columns i * colsPerWorker to (i + 1) * colsPerWorker - 1 into localbuffer
+        
+        check if localbuffer is sorted
+        sorted <- 1 if sorted, 0 if not
+        if rank is master
+            isSorted <- -1
+            MPI reduce sorted to master with minimum sorted into isSorted
+            if isSorted is 1
+                output "matrix sorted"
+            else
+                output "matrix not sorted"
+        
         Finalize MPI
     end func
     ```
