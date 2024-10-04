@@ -30,7 +30,6 @@
         num_procs <- MPI size
         
         colsPerWorker = numCols / num_procs
-        extraCols = numCols % num_procs
         
         if rank is master
             for i: 1 -> num_procs
