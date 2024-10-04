@@ -14,11 +14,11 @@ Parallel Sorting Algorithms
 
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 We will be comparing the following algorithms:
-- Bitonic Sort: Kimberly Chen
-- Sample Sort:
-- Merge Sort:
-- Radix Sort:
-- Column Sort: Jeff Ooi
+- Bitonic Sort - Kimberly Chen
+- Sample Sort -
+- Merge Sort -
+- Radix Sort -
+- Column Sort - Jeff Ooi
 
 We will use the Grace cluster on the TAMU HPRC.
 
