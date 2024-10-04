@@ -17,6 +17,7 @@
 - Sample Sort:
 - Merge Sort:
 - Radix Sort:
+- Column Sort:
 
 ### 2b. Pseudocode for each parallel algorithm
 - For MPI programs, include MPI calls you will use to coordinate between processes
