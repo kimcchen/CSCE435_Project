@@ -10,14 +10,17 @@
 5. Jeff Ooi
 
 ## 2. Project topic (e.g., parallel sorting algorithms)
+Parallel Sorting Algorithms
 
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
-
+We will be comparing the following algorithms:
 - Bitonic Sort:
 - Sample Sort:
 - Merge Sort:
 - Radix Sort:
-- Column Sort:
+- Column Sort: Jeff Ooi
+
+We will use the Grace cluster on the TAMU HPRC.
 
 ### 2b. Pseudocode for each parallel algorithm
 - For MPI programs, include MPI calls you will use to coordinate between processes
