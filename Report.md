@@ -1,6 +1,6 @@
 # CSCE 435 Group project
 
-## 0. Group number: 2
+## 0. Group number: 2 (Honors)
 
 ## 1. Group members:
 1. Kimberly Chen
@@ -8,6 +8,8 @@
 3. Suhu Lavu
 4. Andrew Mao
 5. Jeff Ooi
+
+We will communicate via a messaging group chat.
 
 ## 2. Project topic (e.g., parallel sorting algorithms)
 Parallel Sorting Algorithms
