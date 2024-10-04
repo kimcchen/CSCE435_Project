@@ -19,7 +19,7 @@ We will be comparing the following algorithms:
 - Bitonic Sort - Kimberly Chen
 - Sample Sort -
 - Merge Sort -
-- Radix Sort -
+- Radix Sort - Andrew Mao
 - Column Sort - Jeff Ooi
 
 We will use the Grace cluster on the TAMU HPRC.
@@ -78,6 +78,55 @@ We will use the Grace cluster on the TAMU HPRC.
             end for
             output "Final sorted array"
         end if
+    
+        Finalize MPI
+    end func
+    ```
+- Radix Sort Pseudocode
+    ```
+    func radix_sort(matrix, lowIndex, count, direction)
+        Initialize MPI
+        rank <- MPI rank
+        num_procs <- MPI size
+
+        keysPerWorker <- numKeys / num_procs
+        
+        if rank is master: 
+            for i: 1 -> num_procs - 1:
+                MPI send arr[i * keysPerWorker to (i + 1) * keysPerWorker - 1] to process i
+            end for
+        end if
+        
+        localbuffer <- [keysPerWorker]
+        
+        if rank is worker:
+            MPI receive arr[i * keysPerWorker to (i + 1) * keysPerWorker - 1] into localbuffer
+        end if
+        
+        # For each iteration, process g bits at a time (Radix Sorting)
+        max_bits <- get bits max(arr)
+        for i: 0 -> (max_bits / g) do:
+            local_bucket_counts <- counting_sort(localbuffer, g, i)
+    
+            # Aggregate the result of counting sort, make global count of keys per bucket
+            global_bucket_counts <- MPI all_to_all(local_bucket_counts)  
+            prefix_sums <- get prefix sums of global_bucket_counts
+            bucketed_keys <- distribute_keys(localbuffer, g, i, prefix_sums)
+
+            # update these results to preserve order
+            exchanged_keys <- MPI all_to_all_exchange(bucketed_keys)
+            sort_by_g_bits(exchanged_keys, g, i)
+            localbuffer <- exchanged_keys
+        end for
+        
+        if rank is worker:
+            MPI send localbuffer to master
+        end if
+        
+        if rank is master: 
+            for i: 1 -> num_procs - 1 do:
+                MPI receive sorted buffer into arr
+            end for
     
         Finalize MPI
     end func
