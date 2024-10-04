@@ -14,7 +14,7 @@ Parallel Sorting Algorithms
 
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 We will be comparing the following algorithms:
-- Bitonic Sort:
+- Bitonic Sort: Kimberly Chen
 - Sample Sort:
 - Merge Sort:
 - Radix Sort:
@@ -24,6 +24,62 @@ We will use the Grace cluster on the TAMU HPRC.
 
 ### 2b. Pseudocode for each parallel algorithm
 - For MPI programs, include MPI calls you will use to coordinate between processes
+- Bitonic Sort Pseudocode
+    ```
+    func bitonic_sort(matrix, lowIndex, count, direction)
+        Initialize MPI
+        rank <- MPI rank
+        num_procs <- MPI size
+    
+        if count > 1
+            k = count / 2  // Divide the array into two halves
+    
+            // Sort the first half in ascending order
+            bitonicSort(matrix, lowIndex, k, 1)
+    
+            // Sort the second half in descending order
+            bitonicSort(matrix, lowIndex + k, k, 0)
+    
+            // Merge the two halves according to the 'direction'
+            bitonicMerge(arr[], lowIndex, count, direction)
+ 
+            for step = 1 to log2(num_procs)
+                partner <- rank XOR step
+    
+                // Exchange sorted halves with partner process and merge
+                if direction == 1 // this means it is ascending
+                    if rank < partner
+                        MPI send local_array to partner
+                        MPI receive partner_array from partner
+                        matrix <- bitonic_merge_ascending(matrix, partner_array)
+                    else
+                        MPI send local_array to partner
+                        MPI receive partner_array from partner
+                        matrix <- bitonic_merge_descending(matrix, partner_array)
+                else // this means it is descending
+                    if rank < partner
+                        MPI send local_array to partner
+                        MPI receive partner_array from partner
+                        matrix <- bitonic_merge_descending(matrix, partner_array)
+                    else
+                        MPI send local_array to partner
+                        MPI receive partner_array from partner
+                        matrix <- bitonic_merge_ascending(matrix, partner_array)
+                end if
+            end for
+        end if
+    
+        // Gather all sorted data at master
+        if rank is master
+            for i: 1 -> num_procs
+                MPI receive sorted segments from all processes
+            end for
+            output "Final sorted array"
+        end if
+    
+        Finalize MPI
+    end func
+    ```
 - Column Sort Pseudocode
     ```
     Assumption: numRows >= 2 * (numCols - 1)^2
