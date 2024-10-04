@@ -185,6 +185,13 @@ We will use the Grace cluster on the TAMU HPRC.
     ```
 
 ### 2c. Evaluation plan - what and how will you measure and compare
-- Input sizes, Input types
-- Strong scaling (same problem size, increase number of processors/nodes)
+We will measure and compare the sorting times of:
+- Different input sizes and input types
+    - Input sizes are 2^16, 2^18, 2^20, 2^22, 2^24, 2^26, 2^28
+    - Input types are sorted, random, reverse sorted, 1% perturbed
+- Strong scaling (same problem size, increase number of processors)
+    - Number of processes are 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024
 - Weak scaling (increase problem size, increase number of processors)
+    - Number of processes are 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024
+
+We will collect them using Caliper and compare them using Thicket
