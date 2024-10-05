@@ -17,7 +17,7 @@ Parallel Sorting Algorithms
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 We will be comparing the following algorithms:
 - Bitonic Sort - Kimberly Chen
-- Sample Sort -
+- Sample Sort - Spencer Le
 - Merge Sort -
 - Radix Sort - Andrew Mao
 - Column Sort - Jeff Ooi
@@ -82,54 +82,108 @@ We will use the Grace cluster on the TAMU HPRC.
         Finalize MPI
     end func
     ```
-- Radix Sort Pseudocode
+- Sample Sort Pseudocode
     ```
-    func radix_sort(matrix, lowIndex, count, direction)
-        Initialize MPI
-        rank <- MPI rank
-        num_procs <- MPI size
+    parallel_sample_sort(local_data):
+        // Initialize MPI environment
+        MPI_Init()
 
-        keysPerWorker <- numKeys / num_procs
-        
-        if rank is master: 
-            for i: 1 -> num_procs - 1:
-                MPI send arr[i * keysPerWorker to (i + 1) * keysPerWorker - 1] to process i
-            end for
-        end if
-        
-        localbuffer <- [keysPerWorker]
-        
-        if rank is worker:
-            MPI receive arr[i * keysPerWorker to (i + 1) * keysPerWorker - 1] into localbuffer
-        end if
-        
-        # For each iteration, process g bits at a time (Radix Sorting)
-        max_bits <- get bits max(arr)
-        for i: 0 -> (max_bits / g) do:
-            local_bucket_counts <- counting_sort(localbuffer, g, i)
-    
-            # Aggregate the result of counting sort, make global count of keys per bucket
-            global_bucket_counts <- MPI all_to_all(local_bucket_counts)  
-            prefix_sums <- get prefix sums of global_bucket_counts
-            bucketed_keys <- distribute_keys(localbuffer, g, i, prefix_sums)
+        // Get total number of processes and rank of each process
+        int num_procs, rank
+        MPI_Comm_size(MPI_COMM_WORLD, &num_procs)
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank)
 
-            # update these results to preserve order
-            exchanged_keys <- MPI all_to_all_exchange(bucketed_keys)
-            sort_by_g_bits(exchanged_keys, g, i)
-            localbuffer <- exchanged_keys
-        end for
+        // Step 1: Sort local data locally
+        local_data = sort(local_data)
+
+        // Step 2: Choose 'p' samples from the sorted local data
+        samples = select_samples(local_data, num_procs)
+
+        // Step 3: Gather all samples to the root process
+        all_samples = []
+        MPI_Gather(samples, num_procs, MPI_INT, all_samples, num_procs, MPI_INT, root=0, MPI_COMM_WORLD)
+
+        // Step 4: Root process sorts the gathered samples and selects splitters
+        splitters = []
+        if rank == 0:
+            all_samples_sorted = sort(all_samples)
+            splitters = select_splitters(all_samples_sorted, num_procs)
+
+        // Step 5: Broadcast splitters to all processes
+        MPI_Bcast(splitters, num_procs, MPI_INT, root=0, MPI_COMM_WORLD)
+
+        // Step 6: Each process redistributes its local data based on the splitters
+        buckets = distribute_data(local_data, splitters, num_procs)
+
+        // Step 7: Each process sends its buckets to the appropriate processes
+        for i = 0 to num_procs - 1:
+            // Send and receive buckets to/from each process
+            send_bucket_to_process(buckets[i], i)
+            receive_bucket_from_process(i)
+
+        // Step 8: Merge the received buckets
+        local_data = merge(received_buckets)
+
+        // Step 9: Perform local sort on the merged data
+        local_data = sort(local_data)
+
+        // Step 10: Gather sorted data on the root process
+        sorted_data = []
+        MPI_Gather(local_data, len(local_data), MPI_INT, sorted_data, len(local_data), MPI_INT, root=0, MPI_COMM_WORLD)
+
+        // Finalize MPI environment
+        MPI_Finalize()
+
+        return sorted_data
+        ```
+    - Radix Sort Pseudocode
+        ```
+        func radix_sort(matrix, lowIndex, count, direction)
+            Initialize MPI
+            rank <- MPI rank
+            num_procs <- MPI size
+
+            keysPerWorker <- numKeys / num_procs
+            
+            if rank is master: 
+                for i: 1 -> num_procs - 1:
+                    MPI send arr[i * keysPerWorker to (i + 1) * keysPerWorker - 1] to process i
+                end for
+            end if
+            
+            localbuffer <- [keysPerWorker]
+            
+            if rank is worker:
+                MPI receive arr[i * keysPerWorker to (i + 1) * keysPerWorker - 1] into localbuffer
+            end if
+            
+            # For each iteration, process g bits at a time (Radix Sorting)
+            max_bits <- get bits max(arr)
+            for i: 0 -> (max_bits / g) do:
+                local_bucket_counts <- counting_sort(localbuffer, g, i)
         
-        if rank is worker:
-            MPI send localbuffer to master
-        end if
-        
-        if rank is master: 
-            for i: 1 -> num_procs - 1 do:
-                MPI receive sorted buffer into arr
+                # Aggregate the result of counting sort, make global count of keys per bucket
+                global_bucket_counts <- MPI all_to_all(local_bucket_counts)  
+                prefix_sums <- get prefix sums of global_bucket_counts
+                bucketed_keys <- distribute_keys(localbuffer, g, i, prefix_sums)
+
+                # update these results to preserve order
+                exchanged_keys <- MPI all_to_all_exchange(bucketed_keys)
+                sort_by_g_bits(exchanged_keys, g, i)
+                localbuffer <- exchanged_keys
             end for
-    
-        Finalize MPI
-    end func
+            
+            if rank is worker:
+                MPI send localbuffer to master
+            end if
+            
+            if rank is master: 
+                for i: 1 -> num_procs - 1 do:
+                    MPI receive sorted buffer into arr
+                end for
+        
+            Finalize MPI
+        end func
     ```
 - Column Sort Pseudocode
     ```
