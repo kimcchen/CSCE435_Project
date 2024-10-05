@@ -18,8 +18,6 @@ Parallel Sorting Algorithms
 We will be comparing the following algorithms:
 - Bitonic Sort - Kimberly Chen
 - Sample Sort - Spencer Le
-- Merge Sort -
-- Sample Sort -
 - Merge Sort - Suhu Lavu
 - Radix Sort - Andrew Mao
 - Column Sort - Jeff Ooi
