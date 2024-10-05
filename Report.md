@@ -84,7 +84,7 @@ We will use the Grace cluster on the TAMU HPRC.
     ```
 - Sample Sort Pseudocode
     ```
-    parallel_sample_sort(local_data):
+    func parallel_sample_sort(local_data):
         // Initialize MPI environment
         MPI_Init()
 
@@ -135,7 +135,8 @@ We will use the Grace cluster on the TAMU HPRC.
         MPI_Finalize()
 
         return sorted_data
-        ```
+    end func
+    ```
 - Merge Sort Pseudocode
     ```
     func parallel_merge_sort(array, n):
