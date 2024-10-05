@@ -136,12 +136,6 @@ We will use the Grace cluster on the TAMU HPRC.
 
         return sorted_data
         ```
-    - Radix Sort Pseudocode
-        ```
-        func radix_sort(matrix, lowIndex, count, direction)
-            Initialize MPI
-            rank <- MPI rank
-            num_procs <- MPI size
 - Merge Sort Pseudocode
     ```
     func parallel_merge_sort(array, n):
