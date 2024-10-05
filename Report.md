@@ -18,7 +18,7 @@ Parallel Sorting Algorithms
 We will be comparing the following algorithms:
 - Bitonic Sort - Kimberly Chen
 - Sample Sort -
-- Merge Sort -
+- Merge Sort - Suhu Lavu
 - Radix Sort - Andrew Mao
 - Column Sort - Jeff Ooi
 
@@ -82,6 +82,98 @@ We will use the Grace cluster on the TAMU HPRC.
         Finalize MPI
     end func
     ```
+- Merge Sort Pseudocode
+    ```
+    func parallel_merge_sort(array, n):
+        Initialize MPI
+        rank <- MPI rank
+        size <- MPI size
+
+        # calculate size of worker array and create local copy
+        worker_size = n / size
+        worker_arr = new array[worker_size]
+
+        # send real array to all processes
+        MPI_Scatter(array, worker_size, MPI_INT, worker_arr, worker_size, MPI_INT, root=0, MPI_COMM_WORLD)
+
+        # sort local copy
+        sorted_arr = merge_sort(worker_arr)
+
+        # merge sorted pieces back together
+        step = 1
+        while step < size:
+            if rank % (2 * step) == 0:
+                if rank + step < size:
+                    # get sorted array from another process
+                    received_size = worker_size * step
+                    received_array = new array[received_size]
+                    MPI_Recv(received_array, received_size, MPI_INT, source=rank + step, tag=0, MPI_COMM_WORLD)
+
+                    # merge received array with local array
+                    sorted_arr = merge(sorted_arr, received_array)
+                    worker_size += received_size
+            else:
+                # send sorted array to another process
+                target = rank - step
+                MPI_Send(sorted_arr, worker_size, MPI_INT, dest=target, tag=0, MPI_COMM_WORLD)
+                break out of loop
+            step *= 2
+
+        # master process gathers the final sorted array
+        if rank == 0:
+            MPI_Gather(sorted_arr, worker_size, MPI_INT, array, worker_size, MPI_INT, root=0, MPI_COMM_WORLD)
+
+        Finalize MPI
+    end func
+
+    func merge(arr1, arr2):
+        size_1 = size(arr1)
+        size_2 = size(arr2)
+        final = new array[size_1 + size_2]
+        i, j, k = 0
+
+        while i < size_1 and j < size_2:
+            if arr1[i] < arr2[j]:
+                final[k] = arr1[i]
+                i += 1
+            else:
+                final[k] = arr2[j]
+                j += 1
+            k += 1
+        
+        # copy leftover elements
+        while i < size_1:
+            final[k] = arr1[i]
+            i += 1
+            k += 1
+
+        while j < size_2:
+            final[k] = arr2[j]
+            j += 1
+            k += 1
+        
+        return final
+    end func
+
+    func merge_sort(arr):
+        # base case
+        if size(arr) <= 1:
+            return arr
+
+        # find midpoint
+        mid = size(arr) / 2
+
+        # sort left array        
+        left_sorted = merge_sort(arr[0:mid])
+
+        # sort right array
+        right_sorted = merge_sort(arr[mid + 1:])
+
+        # merge them together
+        return merge(left_sorted, right_sorted)
+    end func
+    ```
+
 - Radix Sort Pseudocode
     ```
     func radix_sort(matrix, lowIndex, count, direction)
