@@ -18,26 +18,26 @@
 #define NEG_INFINITY INT32_MIN
 
 int main(int argc, char *argv[]) {
-    bool doPrint = false;
-    if (argc != 4) {
-        printf("usage: ./column_sort_mpi <number_of_processes> <number_of_matrix_rows> <number_of_matrix_columns\n");
+    // bool doPrint = false;
+    if (argc != 3) {
+        printf("usage: ./column_sort_mpi <number_of_matrix_rows> <number_of_matrix_columns\n");
         return 0;
     }
-    // srand(time(NULL));
-    int num_procs = atoi(argv[1]);
-    int numRows = atoi(argv[2]);
-    int numCols = atoi(argv[3]);
+    srand(time(NULL));
+    int numRows = atoi(argv[1]);
+    int numCols = atoi(argv[2]);
 
-    if (numRows < 2 * (numCols - 1) * (numCols - 1)) {
+    if (numRows < 2 * (numCols - 1) * (numCols - 1) || numRows <= 0 || numCols <= 0) {
         printf("<number_of_matrix_rows> must be >= 2 * (<number_of_matrix_columns> - 1)^2\n");
+        printf("<number_of_matrix_rows> must be > 0\n");
+        printf("<number_of_matrix_columns> must be > 0\n");
         return 0;
     }
 
     int matrixSize = numRows * numCols;
 
-    int numColsPerWorker = numCols / num_procs;
-
-    int rank;
+    int rank,
+        num_procs;
 
     int dest, 
         src,
@@ -48,8 +48,6 @@ int main(int argc, char *argv[]) {
     int matrix[numCols][numRows],
         shiftedMatrix[numCols+1][numRows],
         rowMatrix[numRows][numCols];
-    
-    int oneD[matrixSize];
     
     int colNum,
         colIdx,
@@ -71,7 +69,9 @@ int main(int argc, char *argv[]) {
     MPI_Init(&argc, &argv);
 
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    // MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
+    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
+
+    int numColsPerWorker = numCols / num_procs;
 
     // cali::ConfigManager mgr;
     // mgr.start();
@@ -80,16 +80,25 @@ int main(int argc, char *argv[]) {
     if (rank == MASTER) {
         // create matrix
         double matrix_create_start = MPI_Wtime();
-        if (doPrint) { printf("\n"); }
+
         for (int i = 0; i < numCols; ++i) {
             for (int j = 0; j < numRows; ++j) {
                 matrix[i][j] = rand() % matrixSize;
                 // matrix[i][j] = i*numRows + j;
-                if (doPrint) { printf("%d,", matrix[i][j]); }
             }
-            if (doPrint) { printf("\n"); }
         }
-        if (doPrint) { printf("\n"); }
+
+        // if (doPrint) {
+        //     printf("\n");
+        //     for (int i = 0; i < numCols; ++i) {
+        //         for (int j = 0; j < numRows; ++j) {
+        //             printf("%d,", matrix[i][j]);
+        //         }
+        //         printf("\n");
+        //     }
+        //     printf("\n");
+        // }
+
         double matrix_create_end = MPI_Wtime();
         matrix_creation_time = matrix_create_end - matrix_create_start;
 
@@ -121,16 +130,16 @@ int main(int argc, char *argv[]) {
         double sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
         
-        if (doPrint) {
-            printf("\n");
-            for (int i = 0; i < numRows; ++i) {
-                for (int j = 0; j < numCols; ++j) {
-                    printf("%d,", rowMatrix[i][j]);
-                }
-                printf("\n");
-            }
-            printf("\n");
-        }
+        // if (doPrint) {
+        //     printf("\n");
+        //     for (int i = 0; i < numRows; ++i) {
+        //         for (int j = 0; j < numCols; ++j) {
+        //             printf("%d,", rowMatrix[i][j]);
+        //         }
+        //         printf("\n");
+        //     }
+        //     printf("\n");
+        // }
 
         printf("Step 1: Matrix Sorted\n");
         printf("sort_time: %f \n\n", sort_time);
@@ -148,16 +157,16 @@ int main(int argc, char *argv[]) {
         transpose_time = transpose_time_end - transpose_time_start;
         // transpose matrix end
 
-        if (doPrint) {
-            printf("\n");
-            for (int i = 0; i < numCols; ++i) {
-                for (int j = 0; j < numRows; ++j) {
-                    printf("%d,", matrix[i][j]);
-                }
-                printf("\n");
-            }
-            printf("\n");
-        }
+        // if (doPrint) {
+        //     printf("\n");
+        //     for (int i = 0; i < numCols; ++i) {
+        //         for (int j = 0; j < numRows; ++j) {
+        //             printf("%d,", matrix[i][j]);
+        //         }
+        //         printf("\n");
+        //     }
+        //     printf("\n");
+        // }
 
         printf("Step 2: Matrix Transposed\n");
         printf("transpose_time: %f \n\n", transpose_time);
@@ -186,16 +195,16 @@ int main(int argc, char *argv[]) {
         sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
         
-        if (doPrint) {
-            printf("\n");
-            for (int i = 0; i < numCols; ++i) {
-                for (int j = 0; j < numRows; ++j) {
-                    printf("%d,", matrix[i][j]);
-                }
-                printf("\n");
-            }
-            printf("\n");
-        }
+        // if (doPrint) {
+        //     printf("\n");
+        //     for (int i = 0; i < numCols; ++i) {
+        //         for (int j = 0; j < numRows; ++j) {
+        //             printf("%d,", matrix[i][j]);
+        //         }
+        //         printf("\n");
+        //     }
+        //     printf("\n");
+        // }
 
         printf("Step 3: Matrix Sorted\n");
         printf("sort_time: %f \n\n", sort_time);
@@ -208,45 +217,34 @@ int main(int argc, char *argv[]) {
                 rowMatrix[i][j] = matrix[j][i];
             }
         }
-
-        if (doPrint) {
-            printf("\n");
-            for (int i = 0; i < numRows; ++i) {
-                for (int j = 0; j < numCols; ++j) {
-                    printf("%d,", rowMatrix[i][j]);
-                }
-                printf("\n");
-            }
-            printf("\n");
-        }
-
-        memcpy(matrix, rowMatrix, matrixSize*sizeof(int));
-
+        
         double untranspose_end = MPI_Wtime();
         untranspose_time = untranspose_end - untranspose_start;
         // untranspose matrix end
 
-        if (doPrint) {
-            printf("\n");
-            for (int i = 0; i < numCols; ++i) {
-                for (int j = 0; j < numRows; ++j) {
-                    printf("%d,", matrix[i][j]);
-                }
-                printf("\n");
-            }
-            printf("\n");
-        }
+        // if (doPrint) {
+        //     printf("\n");
+        //     for (int i = 0; i < numRows; ++i) {
+        //         for (int j = 0; j < numCols; ++j) {
+        //             printf("%d,", rowMatrix[i][j]);
+        //         }
+        //         printf("\n");
+        //     }
+        //     printf("\n");
+        // }
 
         printf("Step 4: Matrix Untransposed\n");
         printf("untranspose_time: %f \n\n", untranspose_time);
 
         sort_start = MPI_Wtime();
-        offset = numColsPerWorker;
+        offset = numColsPerWorker*numRows;
         for (dest = 1; dest < num_procs; ++dest) {
-            MPI_Send(&matrix[offset], numColsPerWorker * numRows, MPI_INT, dest, FROM_MASTER, MPI_COMM_WORLD);
+            MPI_Send((*rowMatrix+offset), numColsPerWorker * numRows, MPI_INT, dest, FROM_MASTER, MPI_COMM_WORLD);
             // printf("sent %d cols to process %d\n", numColsPerWorker, dest);
-            offset = offset + numColsPerWorker;
+            offset = offset + numColsPerWorker*numRows;
         }
+
+        memcpy(matrix, rowMatrix, numColsPerWorker*numRows*sizeof(int));
 
         for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
             std::sort(matrix[colNum], matrix[colNum] + numRows);
@@ -261,16 +259,16 @@ int main(int argc, char *argv[]) {
         sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
 
-        if (doPrint) {
-            printf("\n");
-            for (int i = 0; i < numCols; ++i) {
-                for (int j = 0; j < numRows; ++j) {
-                    printf("%d,", matrix[i][j]);
-                }
-                printf("\n");
-            }
-            printf("\n");
-        }
+        // if (doPrint) {
+        //     printf("\n");
+        //     for (int i = 0; i < numCols; ++i) {
+        //         for (int j = 0; j < numRows; ++j) {
+        //             printf("%d,", matrix[i][j]);
+        //         }
+        //         printf("\n");
+        //     }
+        //     printf("\n");
+        // }
 
         printf("Step 5: Matrix Sorted\n");
         printf("sort_time: %f \n\n", sort_time);
@@ -280,45 +278,29 @@ int main(int argc, char *argv[]) {
 
         int beginShiftAmount = numRows / 2;
         int endShiftAmount = numRows / 2 + numRows % 2;
-        int k = 0;
-        for (int i = 0; i < numCols; ++i) {
-            for (int j = 0; j < numRows; ++j) {
-                oneD[k++] = matrix[i][j];
-            }
-        }
+
         for (int i = 0; i < beginShiftAmount; ++i) {
             shiftedMatrix[0][i] = NEG_INFINITY;
         }
         for (int i = 0; i < endShiftAmount; ++i) {
             shiftedMatrix[numCols][numRows - endShiftAmount + i] = POS_INFINITY;
         }
-        k = 0;
-        colIdx = 0;
-        rowIdx = beginShiftAmount;
-        while (k < matrixSize)
-        {
-            if (rowIdx % numRows == 0)
-            {
-                ++colIdx;
-            }
-            shiftedMatrix[colIdx][rowIdx % numRows] = oneD[k];
-            ++k; ++rowIdx;
-        }
+        memcpy((*shiftedMatrix+beginShiftAmount+1), matrix, matrixSize*sizeof(int));
 
         double shift_end = MPI_Wtime();
         shift_time = shift_end - shift_start;
         // end shift matrix
 
-        if (doPrint) {
-            printf("\n");
-            for (int i = 0; i < numCols+1; ++i) {
-                for (int j = 0; j < numRows; ++j) {
-                    printf("%d,", shiftedMatrix[i][j]);
-                }
-                printf("\n");
-            }
-            printf("\n");
-        }
+        // if (doPrint) {
+        //     printf("\n");
+        //     for (int i = 0; i < numCols+1; ++i) {
+        //         for (int j = 0; j < numRows; ++j) {
+        //             printf("%d,", shiftedMatrix[i][j]);
+        //         }
+        //         printf("\n");
+        //     }
+        //     printf("\n");
+        // }
 
         printf("Step 6: Matrix Shifted\n");
         printf("shift_time: %f \n\n", shift_time);
@@ -347,42 +329,23 @@ int main(int argc, char *argv[]) {
         sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
 
-        if (doPrint) {
-            printf("\n");
-            for (int i = 0; i < numCols + 1; ++i) {
-                for (int j = 0; j < numRows; ++j) {
-                    printf("%d,", shiftedMatrix[i][j]);
-                }
-                printf("\n");
-            }
-            printf("\n");
-        }
+        // if (doPrint) {
+        //     printf("\n");
+        //     for (int i = 0; i < numCols + 1; ++i) {
+        //         for (int j = 0; j < numRows; ++j) {
+        //             printf("%d,", shiftedMatrix[i][j]);
+        //         }
+        //         printf("\n");
+        //     }
+        //     printf("\n");
+        // }
 
         printf("Step 7: Matrix Sorted\n");
         printf("sort_time: %f \n\n", sort_time);
         
         // begin unshift matrix
         double unshift_start = MPI_Wtime();
-
-        k = 0;
-        for (int i = 0; i < numCols + 1; ++i) {
-            for (int j = 0; j < numRows; ++j) {
-                if (shiftedMatrix[i][j] == NEG_INFINITY || shiftedMatrix[i][j] == POS_INFINITY) {
-                    continue;
-                }
-                oneD[k++] = shiftedMatrix[i][j];
-            }
-        }
-        k = 0;
-        colIdx = -1;
-        rowIdx = 0;
-        while (k < matrixSize) {
-            if (rowIdx % numRows == 0) {
-                ++colIdx;
-            }
-            matrix[colIdx][rowIdx % numRows] = oneD[k];
-            ++k; ++rowIdx;
-        }
+        memcpy(matrix, (*shiftedMatrix+beginShiftAmount+1), matrixSize*sizeof(int));
 
         double unshift_end = MPI_Wtime();
         double total_sort_end = MPI_Wtime();
@@ -412,16 +375,18 @@ int main(int argc, char *argv[]) {
 
     if (rank == MASTER) {
         printf("Step 9: Check if Matrix is Sorted\n");
-        if (doPrint) {
-            printf("\n");
-            for (int i = 0; i < numCols; ++i) {
-                for (int j = 0; j < numRows; ++j) {
-                    printf("%d,", matrix[i][j]);
-                }
-                printf("\n");
-            }
-            printf("\n");
-        }
+
+        // if (doPrint) {
+        //     printf("\n");
+        //     for (int i = 0; i < numCols; ++i) {
+        //         for (int j = 0; j < numRows; ++j) {
+        //             printf("%d,", matrix[i][j]);
+        //         }
+        //         printf("\n");
+        //     }
+        //     printf("\n");
+        // }
+
         offset = numColsPerWorker;
         for (dest = 1; dest < num_procs; ++dest) {
             MPI_Send(&matrix[offset], numColsPerWorker * numRows, MPI_INT, dest, FROM_MASTER, MPI_COMM_WORLD);
