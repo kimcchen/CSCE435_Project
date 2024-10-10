@@ -66,6 +66,20 @@ int main(int argc, char *argv[]) {
         total_time,
         total_sort_time;
 
+    /* Define Caliper region names */
+    const char *transpose = "transpose";
+    const char *untranspose = "untranspose";
+    const char *shift = "shift";
+    const char *unshift = "unshift";
+    const char *sort1 = "sort1";
+    const char *sort2 = "sort2";
+    const char *sort3 = "sort3";
+    const char *sort4 = "sort4";
+    const char *whole_sort = "whole_sort";
+    const char *matrix_creation = "matrix_creation";
+    const char *whole_computation = "whole_computation";
+    const char *sort_check = "sort_check";
+
     MPI_Init(&argc, &argv);
 
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -73,13 +87,16 @@ int main(int argc, char *argv[]) {
 
     int numColsPerWorker = numCols / num_procs;
 
-    // cali::ConfigManager mgr;
-    // mgr.start();
+    cali::ConfigManager mgr;
+    mgr.start();
+
     double total_time_start = MPI_Wtime();
+    CALI_MARK_BEGIN(whole_computation);
 
     if (rank == MASTER) {
         // create matrix
         double matrix_create_start = MPI_Wtime();
+        CALI_MARK_BEGIN(matrix_creation);
 
         for (int i = 0; i < numCols; ++i) {
             for (int j = 0; j < numRows; ++j) {
@@ -99,6 +116,7 @@ int main(int argc, char *argv[]) {
         //     printf("\n");
         // }
 
+        CALI_MARK_END(matrix_creation);
         double matrix_create_end = MPI_Wtime();
         matrix_creation_time = matrix_create_end - matrix_create_start;
 
@@ -107,6 +125,8 @@ int main(int argc, char *argv[]) {
 
         double total_sort_start = MPI_Wtime();
         double sort_start = MPI_Wtime();
+        CALI_MARK_BEGIN(whole_sort);
+        CALI_MARK_BEGIN(sort1);
         
         offset = numColsPerWorker;
         for (dest = 1; dest < num_procs; ++dest) {
@@ -127,6 +147,7 @@ int main(int argc, char *argv[]) {
             offset = offset + numColsPerWorker*numRows;
         }
 
+        CALI_MARK_END(sort1);
         double sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
         
@@ -146,6 +167,7 @@ int main(int argc, char *argv[]) {
 
         // transpose matrix start
         double transpose_time_start = MPI_Wtime();
+        CALI_MARK_BEGIN(transpose);
 
         for (int i = 0; i < numCols; ++i) {
             for (int j = 0; j < numRows; ++j) {
@@ -153,6 +175,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
+        CALI_MARK_END(transpose);
         double transpose_time_end = MPI_Wtime();
         transpose_time = transpose_time_end - transpose_time_start;
         // transpose matrix end
@@ -172,6 +195,7 @@ int main(int argc, char *argv[]) {
         printf("transpose_time: %f \n\n", transpose_time);
 
         sort_start = MPI_Wtime();
+        CALI_MARK_BEGIN(sort2);
 
         offset = numColsPerWorker;
         for (dest = 1; dest < num_procs; ++dest) {
@@ -184,14 +208,13 @@ int main(int argc, char *argv[]) {
             std::sort(matrix[colNum], matrix[colNum] + numRows);
         }
 
-        // memcpy(transposedMatrix, matrix, numColsPerWorker * numRows * sizeof(int));
-
         offset = numColsPerWorker;
         for (src = 1; src < num_procs; ++src) {
             MPI_Recv(&matrix[offset], numColsPerWorker * numRows, MPI_INT, src, FROM_WORKER, MPI_COMM_WORLD, &status);
             offset = offset + numColsPerWorker;
         }
 
+        CALI_MARK_END(sort2);
         sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
         
@@ -211,6 +234,7 @@ int main(int argc, char *argv[]) {
 
         // untranspose matrix start
         double untranspose_start = MPI_Wtime();
+        CALI_MARK_BEGIN(untranspose);
 
         for (int i = 0; i < numRows; ++i) {
             for (int j = 0; j < numCols; ++j) {
@@ -218,6 +242,7 @@ int main(int argc, char *argv[]) {
             }
         }
         
+        CALI_MARK_END(untranspose);
         double untranspose_end = MPI_Wtime();
         untranspose_time = untranspose_end - untranspose_start;
         // untranspose matrix end
@@ -237,6 +262,8 @@ int main(int argc, char *argv[]) {
         printf("untranspose_time: %f \n\n", untranspose_time);
 
         sort_start = MPI_Wtime();
+        CALI_MARK_BEGIN(sort3);
+
         offset = numColsPerWorker*numRows;
         for (dest = 1; dest < num_procs; ++dest) {
             MPI_Send((*rowMatrix+offset), numColsPerWorker * numRows, MPI_INT, dest, FROM_MASTER, MPI_COMM_WORLD);
@@ -256,6 +283,7 @@ int main(int argc, char *argv[]) {
             offset = offset + numColsPerWorker;
         }
 
+        CALI_MARK_END(sort3);
         sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
 
@@ -275,6 +303,7 @@ int main(int argc, char *argv[]) {
 
         // begin shift matrix
         double shift_start = MPI_Wtime();
+        CALI_MARK_BEGIN(shift);
 
         int beginShiftAmount = numRows / 2;
         int endShiftAmount = numRows / 2 + numRows % 2;
@@ -287,6 +316,7 @@ int main(int argc, char *argv[]) {
         }
         memcpy((*shiftedMatrix+beginShiftAmount+1), matrix, matrixSize*sizeof(int));
 
+        CALI_MARK_END(shift);
         double shift_end = MPI_Wtime();
         shift_time = shift_end - shift_start;
         // end shift matrix
@@ -306,6 +336,7 @@ int main(int argc, char *argv[]) {
         printf("shift_time: %f \n\n", shift_time);
 
         sort_start = MPI_Wtime();
+        CALI_MARK_BEGIN(sort4);
 
         offset = numColsPerWorker;
         for (dest = 1; dest < num_procs; ++dest) {
@@ -326,6 +357,7 @@ int main(int argc, char *argv[]) {
             offset = offset + numColsPerWorker;
         }
 
+        CALI_MARK_END(sort4);
         sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
 
@@ -345,8 +377,12 @@ int main(int argc, char *argv[]) {
         
         // begin unshift matrix
         double unshift_start = MPI_Wtime();
+        CALI_MARK_BEGIN(unshift);
+
         memcpy(matrix, (*shiftedMatrix+beginShiftAmount+1), matrixSize*sizeof(int));
 
+        CALI_MARK_END(unshift);
+        CALI_MARK_END(whole_sort);
         double unshift_end = MPI_Wtime();
         double total_sort_end = MPI_Wtime();
         unshift_time = unshift_end - unshift_start;
@@ -375,6 +411,8 @@ int main(int argc, char *argv[]) {
 
     if (rank == MASTER) {
         printf("Step 9: Check if Matrix is Sorted\n");
+
+        CALI_MARK_BEGIN(sort_check);
 
         // if (doPrint) {
         //     printf("\n");
@@ -429,6 +467,28 @@ int main(int argc, char *argv[]) {
     }
 
     if (rank == MASTER) {
+        // printf("Step 9: Check if Matrix is Sorted\n");
+
+        // double check_start = MPI_Wtime();
+        // CALI_MARK_BEGIN(sort_check);
+        // // if (doPrint) {
+        // //     printf("\n");
+        // //     for (int i = 0; i < numCols; ++i) {
+        // //         for (int j = 0; j < numRows; ++j) {
+        // //             printf("%d,", matrix[i][j]);
+        // //         }
+        // //         printf("\n");
+        // //     }
+        // //     printf("\n");
+        // // }
+
+        // offset = numColsPerWorker;
+        // for (dest = 1; dest < num_procs; ++dest) {
+        //     MPI_Send(&matrix[offset], numColsPerWorker * numRows, MPI_INT, dest, FROM_MASTER, MPI_COMM_WORLD);
+        //     // printf("sent %d cols to process %d\n", numColsPerWorker, dest);
+        //     offset = offset + numColsPerWorker;
+        // }
+
         sorted = 1;
         for (src = 1; src < num_procs; src += 2) {
             MPI_Recv(&isSorted, 1, MPI_INT, src, CHECK_SORTED, MPI_COMM_WORLD, &status);
@@ -444,6 +504,7 @@ int main(int argc, char *argv[]) {
         else {
             printf("\nmatrix not sorted\n\n");
         }
+        CALI_MARK_END(sort_check);
         double check_end = MPI_Wtime();
         double total_time_end = MPI_Wtime();
         check_time = check_end - check_start;
@@ -451,8 +512,22 @@ int main(int argc, char *argv[]) {
         printf("check_time: %f \n\n", check_time);
         printf("total_time: %f \n\n", total_time);
     }
-    // mgr.stop();
-    // mgr.flush();
+
+    CALI_MARK_END(whole_computation);
+
+    adiak::init(NULL);
+    adiak::user();
+    adiak::launchdate();
+    adiak::libraries();
+    adiak::cmdline();
+    adiak::clustername();
+    adiak::value("num_procs", num_procs);
+    adiak::value("matrix_size", matrixSize);
+    adiak::value("program_name", "column_sort");
+    adiak::value("matrix_datatype_size", sizeof(int));
+
+    mgr.stop();
+    mgr.flush();
 
     MPI_Finalize();
 }
