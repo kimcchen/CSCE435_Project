@@ -8,6 +8,7 @@
 #include <adiak.hpp>
 
 #include <algorithm>
+#include <math.h>
 
 #define MASTER 0
 #define FROM_MASTER 1 /* setting a message type */
@@ -19,18 +20,24 @@
 
 int main(int argc, char *argv[]) {
     // bool doPrint = false;
-    if (argc != 3) {
-        printf("usage: ./column_sort_mpi <number_of_matrix_rows> <number_of_matrix_columns\n");
+    if (argc != 4) {
+        printf("usage: ./column_sort_mpi <number_of_matrix_rows> <number_of_matrix_columns <array_type>\n");
         return 0;
     }
     srand(time(NULL));
     int numRows = atoi(argv[1]);
     int numCols = atoi(argv[2]);
+    int arrayType = atoi(argv[3]);
 
     if (numRows < 2 * (numCols - 1) * (numCols - 1) || numRows <= 0 || numCols <= 0) {
         printf("<number_of_matrix_rows> must be >= 2 * (<number_of_matrix_columns> - 1)^2\n");
         printf("<number_of_matrix_rows> must be > 0\n");
         printf("<number_of_matrix_columns> must be > 0\n");
+        return 0;
+    }
+    if (arrayType < 0 || arrayType > 3) {
+        printf("<array_type> must be 0, 1, 2, 3\n");
+        printf("0 is sorted\n1 is random\n2 is reverse sorted\n 3 is 1\% perturbed\n");
         return 0;
     }
 
@@ -93,54 +100,96 @@ int main(int argc, char *argv[]) {
     double total_time_start = MPI_Wtime();
     CALI_MARK_BEGIN(whole_computation);
 
-    if (rank == MASTER) {
-        // create matrix
-        double matrix_create_start = MPI_Wtime();
-        CALI_MARK_BEGIN(matrix_creation);
+    // if (rank == MASTER) {
+    // create matrix
+    double matrix_create_start = MPI_Wtime();
+    CALI_MARK_BEGIN(matrix_creation);
 
-        for (int i = 0; i < numCols; ++i) {
+    if (arrayType == 0) {
+        int start = rank * numColsPerWorker * numRows;
+        for (int i = 0; i < numColsPerWorker; ++i) {
+            for (int j = 0; j < numRows; ++j) {
+                matrix[i][j] = start + (i*numColsPerWorker) + j;
+            }
+        }
+    }
+    else if (arrayType == 1) {
+        for (int i = 0; i < numColsPerWorker; ++i) {
             for (int j = 0; j < numRows; ++j) {
                 matrix[i][j] = rand() % matrixSize;
                 // matrix[i][j] = i*numRows + j;
             }
         }
+    }
+    else if (arrayType == 2) {
+        int start = matrixSize - (rank * numColsPerWorker * numRows);
+        for (int i = 0; i < numColsPerWorker; ++i) {
+            for (int j = 0; j < numRows; ++j) {
+                matrix[i][j] = start - (i*numColsPerWorker) - j;
+            }
+        }
+    }
+    else if (arrayType == 3) {
+        int start = rank * numColsPerWorker * numRows;
+        for (int i = 0; i < numColsPerWorker; ++i) {
+            for (int j = 0; j < numRows; ++j) {
+                matrix[i][j] = start + (i * numColsPerWorker) + j;
+            }
+        }
 
-        // if (doPrint) {
-        //     printf("\n");
-        //     for (int i = 0; i < numCols; ++i) {
-        //         for (int j = 0; j < numRows; ++j) {
-        //             printf("%d,", matrix[i][j]);
-        //         }
-        //         printf("\n");
-        //     }
-        //     printf("\n");
-        // }
+        int numPertubed = std::ceil(numColsPerWorker*numRows*0.01);
+        for (int i = 0; i < numPertubed; ++i) {
+            int colIdx1 = rand() % numColsPerWorker;
+            int rowIdx1 = rand() % numRows;
+            int colIdx2 = rand() % numColsPerWorker;
+            if (numColsPerWorker != 1) {
+                while (colIdx1 != colIdx2) { colIdx2 = rand() % numRows; }
+            }
+            int rowIdx2 = rand() % numRows;
+            while (rowIdx1 == rowIdx2) { rowIdx2 = rand() % numRows; }
 
-        CALI_MARK_END(matrix_creation);
-        double matrix_create_end = MPI_Wtime();
-        matrix_creation_time = matrix_create_end - matrix_create_start;
+            std::swap(matrix[colIdx1][rowIdx1], matrix[colIdx2][rowIdx2]);
+        }
+    }
 
-        printf("Step 0: Matrix Created\n");
-        printf("matrix_creation_time: %f \n\n", matrix_creation_time);
+    // if (doPrint) {
+    //     printf("\n");
+    //     for (int i = 0; i < numCols; ++i) {
+    //         for (int j = 0; j < numRows; ++j) {
+    //             printf("%d,", matrix[i][j]);
+    //         }
+    //         printf("\n");
+    //     }
+    //     printf("\n");
+    // }
 
-        double total_sort_start = MPI_Wtime();
-        double sort_start = MPI_Wtime();
+    CALI_MARK_END(matrix_creation);
+    double matrix_create_end = MPI_Wtime();
+    matrix_creation_time = matrix_create_end - matrix_create_start;
+
+    printf("Step 0: Matrix Created\n");
+    printf("matrix_creation_time: %f \n\n", matrix_creation_time);
+
+    double total_sort_start = MPI_Wtime();
+    double sort_start = MPI_Wtime();
+    if (rank == MASTER) {
         CALI_MARK_BEGIN(whole_sort);
         CALI_MARK_BEGIN(sort1);
-        
-        offset = numColsPerWorker;
-        for (dest = 1; dest < num_procs; ++dest) {
-            MPI_Send(&matrix[offset], numColsPerWorker*numRows, MPI_INT, dest, FROM_MASTER, MPI_COMM_WORLD);
-            // printf("sent %d cols to process %d\n", numColsPerWorker, dest);
-            offset = offset + numColsPerWorker;
-        }
-        
-        for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
-            std::sort(matrix[colNum], matrix[colNum] + numRows);
-        }
+    }
+    
+    // offset = numColsPerWorker;
+    // for (dest = 1; dest < num_procs; ++dest) {
+    //     MPI_Send(&matrix[offset], numColsPerWorker*numRows, MPI_INT, dest, FROM_MASTER, MPI_COMM_WORLD);
+    //     // printf("sent %d cols to process %d\n", numColsPerWorker, dest);
+    //     offset = offset + numColsPerWorker;
+    // }
+    
+    for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
+        std::sort(matrix[colNum], matrix[colNum] + numRows);
+    }
 
-        memcpy(rowMatrix, matrix, numColsPerWorker*numRows*sizeof(int));
-
+    if (rank == MASTER) {
+        memcpy(rowMatrix, matrix, numColsPerWorker * numRows * sizeof(int));
         offset = numColsPerWorker*numRows;
         for (src = 1; src < num_procs; ++src) {
             MPI_Recv((*rowMatrix+offset), numColsPerWorker*numRows, MPI_INT, src, FROM_WORKER, MPI_COMM_WORLD, &status);
@@ -396,7 +445,8 @@ int main(int argc, char *argv[]) {
     }
 
     if (rank != MASTER) {
-        for (int i = 0; i < 4; ++i) {
+        MPI_Send(&matrix, numColsPerWorker * numRows, MPI_INT, MASTER, FROM_WORKER, MPI_COMM_WORLD);
+        for (int i = 0; i < 3; ++i) {
             MPI_Recv(&matrix, numColsPerWorker*numRows, MPI_INT, MASTER, FROM_MASTER, MPI_COMM_WORLD, &status);
 
             for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
@@ -471,16 +521,16 @@ int main(int argc, char *argv[]) {
 
         // double check_start = MPI_Wtime();
         // CALI_MARK_BEGIN(sort_check);
-        // // if (doPrint) {
-        // //     printf("\n");
-        // //     for (int i = 0; i < numCols; ++i) {
-        // //         for (int j = 0; j < numRows; ++j) {
-        // //             printf("%d,", matrix[i][j]);
-        // //         }
-        // //         printf("\n");
-        // //     }
-        // //     printf("\n");
-        // // }
+        // if (doPrint) {
+        //     printf("\n");
+        //     for (int i = 0; i < numCols; ++i) {
+        //         for (int j = 0; j < numRows; ++j) {
+        //             printf("%d,", matrix[i][j]);
+        //         }
+        //         printf("\n");
+        //     }
+        //     printf("\n");
+        // }
 
         // offset = numColsPerWorker;
         // for (dest = 1; dest < num_procs; ++dest) {
