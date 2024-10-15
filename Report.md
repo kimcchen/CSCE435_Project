@@ -21,7 +21,7 @@ We will be comparing the following algorithms:
 - Merge Sort - Suhu Lavu
 - Radix Sort - Andrew Mao
 - Column Sort - Jeff Ooi
-  - Column Sort is an eight step matrix parallel sorting algorithm, and the eight steps of the algorithm are as follows:  
+  - Column Sort is an eight step matrix parallel sorting algorithm, with the eight steps of the algorithm being as follows:  
     1. Sort each column of the matrix.
     2. Transpose the matrix by reading the elements in Column-Major and writing back to the matrix in Row-Major, keeping the original shape and dimensions of the matrix
     3. Sort each column of the transposed matrix.
