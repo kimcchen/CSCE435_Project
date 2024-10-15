@@ -86,6 +86,7 @@ int main(int argc, char *argv[]) {
     const char *matrix_creation = "matrix_creation";
     const char *whole_computation = "whole_computation";
     const char *sort_check = "sort_check";
+    const char *input_type;
 
     MPI_Init(&argc, &argv);
 
@@ -119,6 +120,7 @@ int main(int argc, char *argv[]) {
                 matrix[i][j] = start + (i*numColsPerWorker) + j;
             }
         }
+        input_type = "Sorted";
     }
     else if (arrayType == 1) {
         for (int i = 0; i < numColsPerWorker; ++i) {
@@ -127,6 +129,7 @@ int main(int argc, char *argv[]) {
                 // matrix[i][j] = i*numRows + j;
             }
         }
+        input_type = "Random";
     }
     else if (arrayType == 2) {
         int start = matrixSize - (rank * numColsPerWorker * numRows);
@@ -135,6 +138,7 @@ int main(int argc, char *argv[]) {
                 matrix[i][j] = start - (i*numColsPerWorker) - j;
             }
         }
+        input_type = "ReverseSorted";
     }
     else if (arrayType == 3) {
         int start = rank * numColsPerWorker * numRows;
@@ -157,6 +161,8 @@ int main(int argc, char *argv[]) {
 
             std::swap(matrix[colIdx1][rowIdx1], matrix[colIdx2][rowIdx2]);
         }
+
+        input_type = "1_perc_perturbed";
     }
 
     // if (doPrint) {
