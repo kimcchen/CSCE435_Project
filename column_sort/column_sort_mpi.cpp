@@ -92,6 +92,13 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
+    if (num_procs > numCols) {
+        if (rank == MASTER) {
+            printf("number of processors must be <= the number of cols\n");
+        }
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
+
     int numColsPerWorker = numCols / num_procs;
 
     cali::ConfigManager mgr;
@@ -167,12 +174,11 @@ int main(int argc, char *argv[]) {
     double matrix_create_end = MPI_Wtime();
     matrix_creation_time = matrix_create_end - matrix_create_start;
 
-    printf("Step 0: Matrix Created\n");
-    printf("matrix_creation_time: %f \n\n", matrix_creation_time);
-
     double total_sort_start = MPI_Wtime();
     double sort_start = MPI_Wtime();
     if (rank == MASTER) {
+        printf("Step 0: Matrix Created\n");
+        printf("matrix_creation_time: %f \n\n", matrix_creation_time);
         CALI_MARK_BEGIN(whole_sort);
         CALI_MARK_BEGIN(sort1);
     }
@@ -566,15 +572,20 @@ int main(int argc, char *argv[]) {
     CALI_MARK_END(whole_computation);
 
     adiak::init(NULL);
-    adiak::user();
-    adiak::launchdate();
-    adiak::libraries();
-    adiak::cmdline();
-    adiak::clustername();
-    adiak::value("num_procs", num_procs);
-    adiak::value("matrix_size", matrixSize);
-    adiak::value("program_name", "column_sort");
-    adiak::value("matrix_datatype_size", sizeof(int));
+    adiak::launchdate();                                          // launch date of the job
+    adiak::libraries();                                           // Libraries used
+    adiak::cmdline();                                             // Command line used to launch the job
+    adiak::clustername();                                         // Name of the cluster
+    adiak::value("algorithm", "column_sort");                         // The name of the algorithm you are using (e.g., "merge", "bitonic")
+    adiak::value("programming_model", "mpi");         // e.g. "mpi"
+    adiak::value("data_type", "int");                         // The datatype of input elements (e.g., double, int, float)
+    adiak::value("size_of_data_type", sizeof(int));         // sizeof(datatype) of input elements in bytes (e.g., 1, 2, 4)
+    adiak::value("input_size", matrixSize);                       // The number of elements in input dataset (1000)
+    adiak::value("input_type", input_type);                       // For sorting, this would be choices: ("Sorted", "ReverseSorted", "Random", "1_perc_perturbed")
+    adiak::value("num_procs", num_procs);                         // The number of processors (MPI ranks)
+    adiak::value("scalability", "strong");                     // The scalability of your algorithm. choices: ("strong", "weak")
+    adiak::value("group_num", 2);                      // The number of your group (integer, e.g., 1, 10)
+    adiak::value("implementation_source", "handwritten"); // Where you got the source code of your algorithm. choices: ("online", "ai", "handwritten").
 
     mgr.stop();
     mgr.flush();
