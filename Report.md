@@ -22,16 +22,14 @@ We will be comparing the following algorithms:
 - Radix Sort - Andrew Mao
 - Column Sort - Jeff Ooi
   - Column Sort is an eight step matrix parallel sorting algorithm, with the eight steps of the algorithm being as follows:
-    ```
-        1. Sort each column of the matrix.
-        2. Transpose the matrix by reading the elements in Column-Major and writing back to the matrix in Row-Major, keeping the original shape and dimensions of the matrix
-        3. Sort each column of the transposed matrix.
-        4. Untranspose the matrix by reading the elements in Row-Major and writing back to the matrix in Column-Major, keeping the original shape and dimensions of the matrix.
-        5. Sort each column of the untransposed matrix.
-        6. Shift the elements of the matrix column-wise down by the floor of rows/2 and fill in the empty spaces in the first column with negative infinity. This will create a rows x (columns + 1) matrix. Fill in the remaining spaces in the final column with positive infinity.
-        7. Sort each column of the shifted matrix.
-        8. Unshift the elements of the matrix by deleting the infinities and shifting every element column-wise up by the floor of rows/2. This will return the matrix back to the original rows x columns dimensions and complete the sort.
-    ```
+    1. Sort each column of the matrix.
+    2. Transpose the matrix by reading the elements in Column-Major and writing back to the matrix in Row-Major, keeping the original shape and dimensions of the matrix
+    3. Sort each column of the transposed matrix.
+    4. Untranspose the matrix by reading the elements in Row-Major and writing back to the matrix in Column-Major, keeping the original shape and dimensions of the matrix.
+    5. Sort each column of the untransposed matrix.
+    6. Shift the elements of the matrix column-wise down by the floor of rows/2 and fill in the empty spaces in the first column with negative infinity. This will create a rows x (columns + 1) matrix. Fill in the remaining spaces in the final column with positive infinity.
+    7. Sort each column of the shifted matrix.
+    8. Unshift the elements of the matrix by deleting the infinities and shifting every element column-wise up by the floor of rows/2. This will return the matrix back to the original rows x columns dimensions and complete the sort.
   - The algorithm has the restriction that `rows >= 2 * (columns - 1) ^ 2`. The longest step of the algorithm is the sorting of the columns, which runs in `O(nlog(n))`. However, because those steps are distributed among `p` processes, the runtime of the algorithm is `O(nlog(n)/p)` time, where `n` is the total number of elements in the matrix.
 
 We will use the Grace cluster on the TAMU HPRC.
