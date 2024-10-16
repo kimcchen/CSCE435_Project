@@ -30,6 +30,13 @@ We will be comparing the following algorithms:
     processors, the parallel time complexity becomes O((n log^2 n) / p). 
 - Sample Sort - Spencer Le
 - Merge Sort - Suhu Lavu
+  - Merge sort is a parallel sorting algorithm that uses a divide and conquer approach to sort an array by recursively dividing it into subarrays, sorting those subarrays, and then merging them backk together. The algorithm works as follows:
+    1. The initial unsorted array is divided into smaller subarrays. Each processor is assigned a portion of this array.
+    2. Each processor sorts their portion using a sequential merge sort where the array is divided into subarrays, sorted, and merged back together.
+    3. Once the local arrays are sorted, processors merge their sorted subarrays. Merging involves comparing elements between 2 sorted arrays and combining them into a single sorted array. 
+    4. Sorted arrays from multiple processors are merged together in pairs, doubling the size of the sorted array at each step until there is a single sorted array with all elements.
+    5. The root process gathers the final sorted array.
+  - Sequential merge sort has a time complexity of `O(nlog(n))`. However, because this is distributed among `p` processors, the time complexity becomes `O(nlog(n)/p)` in parallel.
 - Radix Sort - Andrew Mao
 - Column Sort - Jeff Ooi
   - Column Sort is an eight step matrix parallel sorting algorithm, with the eight steps of the algorithm being as follows:

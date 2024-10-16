@@ -195,14 +195,14 @@ int main (int argc, char *argv[]) {
         
         step *= 2;
     }
+    CALI_MARK_END(comm_large);
+    CALI_MARK_END(comm);
 
     // gather the final sorted array
     if (rank == 0) {
-        MPI_Gather(sorted_arr.data(), worker_size, MPI_INT, arr.data(), worker_size, MPI_INT, 0, MPI_COMM_WORLD);
         printf("Sorted array: ");
-        printVector(arr);
-        CALI_MARK_END(comm_large);
-        CALI_MARK_END(comm);
+        printVector(sorted_arr);
+        
         
         CALI_MARK_BEGIN(correctness_check);
         bool correct = true;
@@ -215,10 +215,6 @@ int main (int argc, char *argv[]) {
         printf("Final array is sorted: %s\n", correct ? "true" : "false");
         CALI_MARK_END(correctness_check);
     }
-    else {
-        MPI_Gather(sorted_arr.data(), worker_size, MPI_INT, nullptr, 0, MPI_INT, 0, MPI_COMM_WORLD);
-    }
-
 
 
     adiak::init(NULL);
