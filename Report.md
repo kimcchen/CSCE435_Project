@@ -17,6 +17,17 @@ Parallel Sorting Algorithms
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 We will be comparing the following algorithms:
 - Bitonic Sort - Kimberly Chen
+  - Bitonic Sort is a parallel sorting algorithm well-suited for distributed systems where the number of processors is a power of 2. The idea behind bitonic sorting is to iteratively      build "bitonic sequences" (sequences that are first increasing and then decreasing) and then merge them to make the sorted array. The algorithm works as follows:
+    1. Locally sorting the processor's assigned portion of the array based on the processor's rank. Processors with even ranks sort in increasing order, while those with odd ranks 
+       sort in decreasing order.
+    2. Bitonic merging where for each pair of processors, one sends its data to the other, and they compare their values. If the rank of the processor is less than its partner's, it 
+       keeps the smaller values; otherwise, it keeps the larger values.
+    3. Recursive sorting where processors again sort their local arrays, but now based on the next bit of their rank so that the sorting order alternates between ascending and 
+       descending for different processors at each level
+    4. Iterative merging where at each depth, the bitonic sequences are merged to form longer sorted sequences, with alternating sorting directions.
+    5. Final gathering where the sorted subarrays held by each processor are gathered by the root processor.
+  - The algorithm requires p = 2^k processors and for the number of elements to be 2^n. The time complexity of bitonic sort is O(n log^2 n), but since it is distributed among p 
+    processors, the parallel time complexity becomes O((n log^2 n) / p). 
 - Sample Sort - Spencer Le
 - Merge Sort - Suhu Lavu
 - Radix Sort - Andrew Mao
