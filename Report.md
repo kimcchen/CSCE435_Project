@@ -38,6 +38,14 @@ We will be comparing the following algorithms:
     5. The root process gathers the final sorted array.
   - Sequential merge sort has a time complexity of `O(nlog(n))`. However, because this is distributed among `p` processors, the time complexity becomes `O(nlog(n)/p)` in parallel.
 - Radix Sort - Andrew Mao
+  - Radix sort is a non comparative sorting algorithm that sorts an array through evaluating and counting individual digits. We sort elements into buckets with a helper counting sort function. This is repeated multiple times starting from the least significant digit until the most significant digit. In contrast to serial radix sort, we must shuffle elements between processors' local buckets. The algorithm works as follows:
+    1. Divide the whole unsorted array into local subarrays to be sorted by p processors.
+    2. For each digit, from the least significant to the most significant, of the largest number in the array, run serial counting sort for the local array.
+    4. Gather counts from all processes to calcaulte the prefix sums and total sums to find the position of each digit like in counting sort.
+    5. Move elements within each processor to appropriate local buckets
+    6. Send and receive elements to correct positions in local arrays of other processes.
+    7. Gather all sorted local arrays back to master.
+   - Sequential run time of decimal radix sort is `O(n * d)` where d is the max number of digits or `log10(maxVal)` and n is the number of elements in the array. An ideal parallel runtime would divide the time by p processors, which is `O(n * d / p)`
 - Column Sort - Jeff Ooi
   - Column Sort is an eight step matrix parallel sorting algorithm, with the eight steps of the algorithm being as follows:
     1. Sort each column of the matrix.
