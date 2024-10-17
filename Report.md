@@ -29,6 +29,13 @@ We will be comparing the following algorithms:
   - The algorithm requires p = 2^k processors and for the number of elements to be 2^n. The time complexity of bitonic sort is O(n log^2 n), but since it is distributed among p 
     processors, the parallel time complexity becomes O((n log^2 n) / p). 
 - Sample Sort - Spencer Le
+  - Sample Sort is a highly scalable parallel sorting algorithm that divides the input data among multiple processors and efficiently sorts large datasets using a combination of local sorting, sampling, and redistribution. It is particularly well-suited for distributed-memory systems. The algorithm works as follows:
+    1. Local Sorting: Each processor receives an equal-sized portion of the array to sort. The processors independently sort their local portions using a sequential sorting algorithm (e.g., quicksort). This step reduces the problem size locally before redistribution.
+    2. Sampling: After the local sort, each processor selects a small sample of its locally sorted data. These samples are used to choose “splitters,” which will define the boundaries between the ranges of values to be assigned to each processor.
+    3. Choosing Splitters: The samples from all processors are gathered on the root processor (or another dedicated processor), which sorts them and selects a set of splitters. These splitters divide the global array into buckets, where each bucket represents a range of values that should be sent to a specific processor.
+    4. Redistribution (All-to-All Communication): Using the splitters, each processor sends its locally sorted data to the appropriate processor, ensuring that the data in each bucket is sent to the processor responsible for that range of values. This step involves an all-to-all communication to exchange data between processors.
+    5. Final Sorting and Gathering: Once each processor has received its portion of data, it performs a final sort on the received data, ensuring that the data within each processor is fully sorted. Finally, the sorted subarrays are gathered by the root processor to form the final globally sorted array.
+   - The algorithm is highly scalable because it minimizes the amount of inter-processor communication and focuses on local sorting and efficient data redistribution. The time complexity of Sample Sort is `O(nlog(n)/p)`, where `n` is the number of elements, and `p` is the number of processors
 - Merge Sort - Suhu Lavu
   - Merge sort is a parallel sorting algorithm that uses a divide and conquer approach to sort an array by recursively dividing it into subarrays, sorting those subarrays, and then merging them backk together. The algorithm works as follows:
     1. The initial unsorted array is divided into smaller subarrays. Each processor is assigned a portion of this array.
@@ -38,6 +45,14 @@ We will be comparing the following algorithms:
     5. The root process gathers the final sorted array.
   - Sequential merge sort has a time complexity of `O(nlog(n))`. However, because this is distributed among `p` processors, the time complexity becomes `O(nlog(n)/p)` in parallel.
 - Radix Sort - Andrew Mao
+  - Radix sort is a non comparative sorting algorithm that sorts an array through evaluating and counting individual digits. We sort elements into buckets with a helper counting sort function. This is repeated multiple times starting from the least significant digit until the most significant digit. In contrast to serial radix sort, we must shuffle elements between processors' local buckets. The algorithm works as follows:
+    1. Divide the whole unsorted array into local subarrays to be sorted by p processors.
+    2. For each digit, from the least significant to the most significant, of the largest number in the array, run serial counting sort for the local array.
+    4. Gather counts from all processes to calcaulte the prefix sums and total sums to find the position of each digit like in counting sort.
+    5. Move elements within each processor to appropriate local buckets
+    6. Send and receive elements to correct positions in local arrays of other processes.
+    7. Gather all sorted local arrays back to master.
+   - Sequential run time of decimal radix sort is `O(n * d)` where d is the max number of digits or `log10(maxVal)` and n is the number of elements in the array. An ideal parallel runtime would divide the time by p processors, which is `O(n * d / p)`
 - Column Sort - Jeff Ooi
   - Column Sort is an eight step matrix parallel sorting algorithm, with the eight steps of the algorithm being as follows:
     1. Sort each column of the matrix.
