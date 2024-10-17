@@ -19,6 +19,7 @@
 #define NEG_INFINITY INT32_MIN
 
 int main(int argc, char *argv[]) {
+    CALI_CXX_MARK_FUNCTION;
     // bool doPrint = false;
     if (argc != 4) {
         printf("usage: ./column_sort_mpi <number_of_matrix_rows> <number_of_matrix_columns <array_type>\n");
