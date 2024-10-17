@@ -17,10 +17,38 @@ Parallel Sorting Algorithms
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 We will be comparing the following algorithms:
 - Bitonic Sort - Kimberly Chen
+  - Bitonic Sort is a parallel sorting algorithm well-suited for distributed systems where the number of processors is a power of 2. The idea behind bitonic sorting is to iteratively      build "bitonic sequences" (sequences that are first increasing and then decreasing) and then merge them to make the sorted array. The algorithm works as follows:
+    1. Locally sorting the processor's assigned portion of the array based on the processor's rank. Processors with even ranks sort in increasing order, while those with odd ranks 
+       sort in decreasing order.
+    2. Bitonic merging where for each pair of processors, one sends its data to the other, and they compare their values. If the rank of the processor is less than its partner's, it 
+       keeps the smaller values; otherwise, it keeps the larger values.
+    3. Recursive sorting where processors again sort their local arrays, but now based on the next bit of their rank so that the sorting order alternates between ascending and 
+       descending for different processors at each level
+    4. Iterative merging where at each depth, the bitonic sequences are merged to form longer sorted sequences, with alternating sorting directions.
+    5. Final gathering where the sorted subarrays held by each processor are gathered by the root processor.
+  - The algorithm requires p = 2^k processors and for the number of elements to be 2^n. The time complexity of bitonic sort is O(n log^2 n), but since it is distributed among p 
+    processors, the parallel time complexity becomes O((n log^2 n) / p). 
 - Sample Sort - Spencer Le
 - Merge Sort - Suhu Lavu
+  - Merge sort is a parallel sorting algorithm that uses a divide and conquer approach to sort an array by recursively dividing it into subarrays, sorting those subarrays, and then merging them backk together. The algorithm works as follows:
+    1. The initial unsorted array is divided into smaller subarrays. Each processor is assigned a portion of this array.
+    2. Each processor sorts their portion using a sequential merge sort where the array is divided into subarrays, sorted, and merged back together.
+    3. Once the local arrays are sorted, processors merge their sorted subarrays. Merging involves comparing elements between 2 sorted arrays and combining them into a single sorted array. 
+    4. Sorted arrays from multiple processors are merged together in pairs, doubling the size of the sorted array at each step until there is a single sorted array with all elements.
+    5. The root process gathers the final sorted array.
+  - Sequential merge sort has a time complexity of `O(nlog(n))`. However, because this is distributed among `p` processors, the time complexity becomes `O(nlog(n)/p)` in parallel.
 - Radix Sort - Andrew Mao
 - Column Sort - Jeff Ooi
+  - Column Sort is an eight step matrix parallel sorting algorithm, with the eight steps of the algorithm being as follows:
+    1. Sort each column of the matrix.
+    2. Transpose the matrix by reading the elements in Column-Major and writing back to the matrix in Row-Major, keeping the original shape and dimensions of the matrix
+    3. Sort each column of the transposed matrix.
+    4. Untranspose the matrix by reading the elements in Row-Major and writing back to the matrix in Column-Major, keeping the original shape and dimensions of the matrix.
+    5. Sort each column of the untransposed matrix.
+    6. Shift the elements of the matrix column-wise down by the floor of rows/2 and fill in the empty spaces in the first column with negative infinity. This will create a rows x (columns + 1) matrix. Fill in the remaining spaces in the final column with positive infinity.
+    7. Sort each column of the shifted matrix.
+    8. Unshift the elements of the matrix by deleting the infinities and shifting every element column-wise up by the floor of rows/2. This will return the matrix back to the original rows x columns dimensions and complete the sort.
+  - The algorithm has the restriction that `rows >= 2 * (columns - 1) ^ 2`. The longest step of the algorithm is the sorting of the columns, which runs in `O(nlog(n))`. However, because those steps are distributed among `p` processes, the runtime of the algorithm is `O(nlog(n)/p)` time, where `n` is the total number of elements in the matrix.
 
 We will use the Grace cluster on the TAMU HPRC.
 
