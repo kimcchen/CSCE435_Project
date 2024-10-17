@@ -74,18 +74,29 @@ int main(int argc, char *argv[]) {
         total_sort_time;
 
     /* Define Caliper region names */
-    const char *transpose = "transpose";
-    const char *untranspose = "untranspose";
-    const char *shift = "shift";
-    const char *unshift = "unshift";
-    const char *sort1 = "sort1";
-    const char *sort2 = "sort2";
-    const char *sort3 = "sort3";
-    const char *sort4 = "sort4";
-    const char *whole_sort = "whole_sort";
-    const char *matrix_creation = "matrix_creation";
-    const char *whole_computation = "whole_computation";
-    const char *sort_check = "sort_check";
+    // const char *transpose = "transpose";
+    // const char *untranspose = "untranspose";
+    // const char *shift = "shift";
+    // const char *unshift = "unshift";
+    // const char *comp_small = "comp_small";
+    // const char *sort2 = "sort2";
+    // const char *sort3 = "sort3";
+    // const char *sort4 = "sort4";
+    // const char *whole_sort = "whole_sort";
+    // const char *matrix_creation = "matrix_creation";
+    // const char *whole_computation = "whole_computation";
+    // const char *sort_check = "sort_check";
+
+    const char *whole_computation = "whole_computation"; // For the entire computation process
+    const char *data_init_runtime = "data_init_runtime"; // For data initialization during runtime
+    const char *comm = "comm";                           // For all communication-related operations
+    const char *comm_small = "comm_small";               // For small communication (e.g., MPI_Sendrecv)
+    const char *comm_large = "comm_large";               // For large communication (e.g., MPI_Scatter/Gather)
+    const char *comp = "comp";                           // For all computation-related operations
+    const char *comp_small = "comp_small";               // For small data computation (e.g., local sorting)
+    const char *comp_large = "comp_large";               // For large data computation (e.g., merging arrays)
+    const char *correctness_check = "correctness_check"; // Encompasses the entire sorting process
+
     const char *input_type;
 
     MPI_Init(&argc, &argv);
@@ -111,7 +122,7 @@ int main(int argc, char *argv[]) {
     // if (rank == MASTER) {
     // create matrix
     double matrix_create_start = MPI_Wtime();
-    CALI_MARK_BEGIN(matrix_creation);
+    CALI_MARK_BEGIN(data_init_runtime);
 
     if (arrayType == 0) {
         int start = rank * numColsPerWorker * numRows;
@@ -176,7 +187,7 @@ int main(int argc, char *argv[]) {
     //     printf("\n");
     // }
 
-    CALI_MARK_END(matrix_creation);
+    CALI_MARK_END(data_init_runtime);
     double matrix_create_end = MPI_Wtime();
     matrix_creation_time = matrix_create_end - matrix_create_start;
 
@@ -185,8 +196,7 @@ int main(int argc, char *argv[]) {
     if (rank == MASTER) {
         printf("Step 0: Matrix Created\n");
         printf("matrix_creation_time: %f \n\n", matrix_creation_time);
-        CALI_MARK_BEGIN(whole_sort);
-        CALI_MARK_BEGIN(sort1);
+        // CALI_MARK_BEGIN(whole_sort);
     }
     
     // offset = numColsPerWorker;
@@ -195,20 +205,27 @@ int main(int argc, char *argv[]) {
     //     // printf("sent %d cols to process %d\n", numColsPerWorker, dest);
     //     offset = offset + numColsPerWorker;
     // }
-    
+    CALI_MARK_BEGIN(comp_small);
+
     for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
         std::sort(matrix[colNum], matrix[colNum] + numRows);
     }
 
+    CALI_MARK_END(comp_small);
+
     if (rank == MASTER) {
         memcpy(rowMatrix, matrix, numColsPerWorker * numRows * sizeof(int));
+
+        CALI_MARK_BEGIN(comm);
+        CALI_MARK_BEGIN(comm_large);
         offset = numColsPerWorker*numRows;
         for (src = 1; src < num_procs; ++src) {
             MPI_Recv((*rowMatrix+offset), numColsPerWorker*numRows, MPI_INT, src, FROM_WORKER, MPI_COMM_WORLD, &status);
             offset = offset + numColsPerWorker*numRows;
         }
+        CALI_MARK_END(comm_large);
+        CALI_MARK_END(comm);
 
-        CALI_MARK_END(sort1);
         double sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
         
@@ -228,7 +245,7 @@ int main(int argc, char *argv[]) {
 
         // transpose matrix start
         double transpose_time_start = MPI_Wtime();
-        CALI_MARK_BEGIN(transpose);
+        CALI_MARK_BEGIN(comp_large);
 
         for (int i = 0; i < numCols; ++i) {
             for (int j = 0; j < numRows; ++j) {
@@ -236,7 +253,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        CALI_MARK_END(transpose);
+        CALI_MARK_END(comp_large);
         double transpose_time_end = MPI_Wtime();
         transpose_time = transpose_time_end - transpose_time_start;
         // transpose matrix end
@@ -256,7 +273,9 @@ int main(int argc, char *argv[]) {
         printf("transpose_time: %f \n\n", transpose_time);
 
         sort_start = MPI_Wtime();
-        CALI_MARK_BEGIN(sort2);
+
+        CALI_MARK_BEGIN(comm);
+        CALI_MARK_BEGIN(comm_large);
 
         offset = numColsPerWorker;
         for (dest = 1; dest < num_procs; ++dest) {
@@ -265,9 +284,19 @@ int main(int argc, char *argv[]) {
             offset = offset + numColsPerWorker;
         }
 
+        CALI_MARK_END(comm_large);
+        CALI_MARK_END(comm);
+
+        CALI_MARK_BEGIN(comp_small);
+
         for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
             std::sort(matrix[colNum], matrix[colNum] + numRows);
         }
+
+        CALI_MARK_END(comp_small);
+
+        CALI_MARK_BEGIN(comm);
+        CALI_MARK_BEGIN(comm_large);
 
         offset = numColsPerWorker;
         for (src = 1; src < num_procs; ++src) {
@@ -275,7 +304,9 @@ int main(int argc, char *argv[]) {
             offset = offset + numColsPerWorker;
         }
 
-        CALI_MARK_END(sort2);
+        CALI_MARK_END(comm_large);
+        CALI_MARK_END(comm);
+
         sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
         
@@ -295,15 +326,15 @@ int main(int argc, char *argv[]) {
 
         // untranspose matrix start
         double untranspose_start = MPI_Wtime();
-        CALI_MARK_BEGIN(untranspose);
+        CALI_MARK_BEGIN(comp_large);
 
         for (int i = 0; i < numRows; ++i) {
             for (int j = 0; j < numCols; ++j) {
                 rowMatrix[i][j] = matrix[j][i];
             }
         }
-        
-        CALI_MARK_END(untranspose);
+
+        CALI_MARK_END(comp_large);
         double untranspose_end = MPI_Wtime();
         untranspose_time = untranspose_end - untranspose_start;
         // untranspose matrix end
@@ -323,7 +354,9 @@ int main(int argc, char *argv[]) {
         printf("untranspose_time: %f \n\n", untranspose_time);
 
         sort_start = MPI_Wtime();
-        CALI_MARK_BEGIN(sort3);
+
+        CALI_MARK_BEGIN(comm);
+        CALI_MARK_BEGIN(comm_large);
 
         offset = numColsPerWorker*numRows;
         for (dest = 1; dest < num_procs; ++dest) {
@@ -332,11 +365,21 @@ int main(int argc, char *argv[]) {
             offset = offset + numColsPerWorker*numRows;
         }
 
+        CALI_MARK_END(comm_large);
+        CALI_MARK_END(comm);
+
+        CALI_MARK_BEGIN(comp_small);
+
         memcpy(matrix, rowMatrix, numColsPerWorker*numRows*sizeof(int));
 
         for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
             std::sort(matrix[colNum], matrix[colNum] + numRows);
         }
+
+        CALI_MARK_END(comp_small);
+
+        CALI_MARK_BEGIN(comm);
+        CALI_MARK_BEGIN(comm_large);
 
         offset = numColsPerWorker;
         for (src = 1; src < num_procs; ++src) {
@@ -344,7 +387,9 @@ int main(int argc, char *argv[]) {
             offset = offset + numColsPerWorker;
         }
 
-        CALI_MARK_END(sort3);
+        CALI_MARK_END(comm_large);
+        CALI_MARK_END(comm);
+
         sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
 
@@ -364,7 +409,7 @@ int main(int argc, char *argv[]) {
 
         // begin shift matrix
         double shift_start = MPI_Wtime();
-        CALI_MARK_BEGIN(shift);
+        CALI_MARK_BEGIN(comp_large);
 
         int beginShiftAmount = numRows / 2;
         int endShiftAmount = numRows / 2 + numRows % 2;
@@ -377,7 +422,7 @@ int main(int argc, char *argv[]) {
         }
         memcpy((*shiftedMatrix+beginShiftAmount+1), matrix, matrixSize*sizeof(int));
 
-        CALI_MARK_END(shift);
+        CALI_MARK_END(comp_large);
         double shift_end = MPI_Wtime();
         shift_time = shift_end - shift_start;
         // end shift matrix
@@ -397,7 +442,8 @@ int main(int argc, char *argv[]) {
         printf("shift_time: %f \n\n", shift_time);
 
         sort_start = MPI_Wtime();
-        CALI_MARK_BEGIN(sort4);
+        CALI_MARK_BEGIN(comm);
+        CALI_MARK_BEGIN(comm_large);
 
         offset = numColsPerWorker;
         for (dest = 1; dest < num_procs; ++dest) {
@@ -406,11 +452,21 @@ int main(int argc, char *argv[]) {
             offset = offset + numColsPerWorker;
         }
 
+        CALI_MARK_END(comm_large);
+        CALI_MARK_END(comm);
+
+        CALI_MARK_BEGIN(comp_small);
+
         for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
             std::sort(shiftedMatrix[colNum], shiftedMatrix[colNum] + numRows);
         }
 
         std::sort(shiftedMatrix[numCols], shiftedMatrix[numCols] + numRows);
+
+        CALI_MARK_END(comp_small);
+
+        CALI_MARK_BEGIN(comm);
+        CALI_MARK_BEGIN(comm_large);
 
         offset = numColsPerWorker;
         for (src = 1; src < num_procs; ++src) {
@@ -418,7 +474,9 @@ int main(int argc, char *argv[]) {
             offset = offset + numColsPerWorker;
         }
 
-        CALI_MARK_END(sort4);
+        CALI_MARK_END(comm_large);
+        CALI_MARK_END(comm);
+
         sort_end = MPI_Wtime();
         sort_time = sort_end - sort_start;
 
@@ -438,12 +496,12 @@ int main(int argc, char *argv[]) {
         
         // begin unshift matrix
         double unshift_start = MPI_Wtime();
-        CALI_MARK_BEGIN(unshift);
+        CALI_MARK_BEGIN(comp_large);
 
         memcpy(matrix, (*shiftedMatrix+beginShiftAmount+1), matrixSize*sizeof(int));
 
-        CALI_MARK_END(unshift);
-        CALI_MARK_END(whole_sort);
+        CALI_MARK_END(comp_large);
+        // CALI_MARK_END(whole_sort);
         double unshift_end = MPI_Wtime();
         double total_sort_end = MPI_Wtime();
         unshift_time = unshift_end - unshift_start;
@@ -457,8 +515,17 @@ int main(int argc, char *argv[]) {
     }
 
     if (rank != MASTER) {
+        CALI_MARK_BEGIN(comm);
+        CALI_MARK_BEGIN(comm_small);
+
         MPI_Send(&matrix, numColsPerWorker * numRows, MPI_INT, MASTER, FROM_WORKER, MPI_COMM_WORLD);
+
+        CALI_MARK_END(comm_small);
+        CALI_MARK_END(comm);
+
         for (int i = 0; i < 3; ++i) {
+            CALI_MARK_BEGIN(comm);
+            CALI_MARK_BEGIN(comm_small);
             MPI_Recv(&matrix, numColsPerWorker*numRows, MPI_INT, MASTER, FROM_MASTER, MPI_COMM_WORLD, &status);
 
             for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
@@ -466,6 +533,8 @@ int main(int argc, char *argv[]) {
             }
 
             MPI_Send(&matrix, numColsPerWorker*numRows, MPI_INT, MASTER, FROM_WORKER, MPI_COMM_WORLD);
+            CALI_MARK_END(comm_small);
+            CALI_MARK_END(comm);
         }
     }
 
@@ -474,7 +543,7 @@ int main(int argc, char *argv[]) {
     if (rank == MASTER) {
         printf("Step 9: Check if Matrix is Sorted\n");
 
-        CALI_MARK_BEGIN(sort_check);
+        CALI_MARK_BEGIN(correctness_check);
 
         // if (doPrint) {
         //     printf("\n");
@@ -566,7 +635,7 @@ int main(int argc, char *argv[]) {
         else {
             printf("\nmatrix not sorted\n\n");
         }
-        CALI_MARK_END(sort_check);
+        CALI_MARK_END(correctness_check);
         double check_end = MPI_Wtime();
         double total_time_end = MPI_Wtime();
         check_time = check_end - check_start;
