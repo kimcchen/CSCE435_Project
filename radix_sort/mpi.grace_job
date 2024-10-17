@@ -19,6 +19,7 @@
 #
 array_size=$1
 processes=$2
+arrayType=$3
 
 module load intel/2020b       # load Intel software stack
 module load CMake/3.12.1
@@ -26,4 +27,4 @@ module load GCCcore/8.3.0
 
 CALI_CONFIG="spot(output=p${processes}-a${array_size}.cali, \
     time.variance,profile.mpi)" \
-mpirun -np $processes ./mergesort $array_size
+mpirun -np $processes ./radix_sort_mpi $array_size $arrayType
