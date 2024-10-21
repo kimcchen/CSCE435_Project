@@ -1,0 +1,20 @@
+{
+    "name": "cache_misses",
+    "description": "Cache misses",
+    "category": "metric",
+    "services": ["papi"],
+    "config": {
+        "CALI_PAPI_COUNTERS": "PAPI_L1_DCM,PAPI_L2_DCM"
+    },
+    "query": [
+        {
+            "level": "local",
+            "select": [
+                "sum(sum#papi.PAPI_L1_DCM)",
+                "sum(sum#papi.PAPI_L2_DCM)",
+                "inclusive_sum(sum#papi.PAPI_L1_DCM)",
+                "inclusive_sum(sum#papi.PAPI_L2_DCM)"
+            ]
+        }
+    ]
+}
