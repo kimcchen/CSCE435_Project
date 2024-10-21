@@ -114,7 +114,6 @@ int main(int argc, char *argv[]) {
 
     int *matrix = new int[localMatrixSize];
     int *rowMatrix = new int[localMatrixSize];
-    int *finalCol = new int[numRows];
 
     cali::ConfigManager mgr;
     mgr.start();
@@ -348,7 +347,7 @@ int main(int argc, char *argv[]) {
         offset = offset + amountToSend;
     }
 
-    memcpy(&matrix[0], &rowMatrix[0], localMatrixSize * sizeof(int));
+    // memcpy(&matrix[0], &rowMatrix[0], localMatrixSize * sizeof(int));
 
     CALI_MARK_END(comp_small);
     CALI_MARK_END(comp);
@@ -392,7 +391,7 @@ int main(int argc, char *argv[]) {
     CALI_MARK_BEGIN(comp_large);
 
     for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
-        sort(&matrix[colNum * numRows], &matrix[colNum * numRows + numRows]);
+        sort(&rowMatrix[colNum * numRows], &rowMatrix[colNum * numRows + numRows]);
     }
 
     CALI_MARK_END(comp_large);
@@ -428,7 +427,7 @@ int main(int argc, char *argv[]) {
     // untranspose matrix
     for (int i = 0; i < numColsPerWorker; ++i) {
         for (int j = 0; j < numRows; ++j) {
-            rowMatrix[j*numColsPerWorker + i] = matrix[i*numRows + j];
+            matrix[j*numColsPerWorker + i] = rowMatrix[i*numRows + j];
         }
     }
 
@@ -448,7 +447,7 @@ int main(int argc, char *argv[]) {
         if (dest == num_procs) {
             dest = 0;
         }
-        MPI_Send((&rowMatrix[offset]), amountToSend, MPI_INT, dest, UNTRANSPOSE, MPI_COMM_WORLD);
+        MPI_Send((&matrix[offset]), amountToSend, MPI_INT, dest, UNTRANSPOSE, MPI_COMM_WORLD);
         offset = offset + amountToSend;
     }
 
@@ -459,7 +458,7 @@ int main(int argc, char *argv[]) {
         if (src == num_procs) {
             src = 0;
         }
-        MPI_Recv((&matrix[offset]), amountToSend, MPI_INT, src, UNTRANSPOSE, MPI_COMM_WORLD, &status);
+        MPI_Recv((&rowMatrix[offset]), amountToSend, MPI_INT, src, UNTRANSPOSE, MPI_COMM_WORLD, &status);
         offset = offset + amountToSend;
     }
 
@@ -485,7 +484,7 @@ int main(int argc, char *argv[]) {
     recvOffset = 0;
     while (recvOffset < numRows) {
         for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
-            memcpy(&rowMatrix[colNum*numRows + recvOffset], &matrix[offset], amountToOffset * sizeof(int));
+            memcpy(&matrix[colNum*numRows + recvOffset], &rowMatrix[offset], amountToOffset * sizeof(int));
             offset  = offset + amountToOffset;
         }
         recvOffset = recvOffset + amountToOffset;
@@ -502,11 +501,11 @@ int main(int argc, char *argv[]) {
     //     printf("\n");
     // }
 
-    offset = 0;
-    while (offset < localMatrixSize) {
-        memcpy((&matrix[offset]), (&rowMatrix[offset]), numRows * sizeof(int));
-        offset = offset + numRows;
-    }
+    // offset = 0;
+    // while (offset < localMatrixSize) {
+    //     memcpy((&matrix[offset]), (&rowMatrix[offset]), numRows * sizeof(int));
+    //     offset = offset + numRows;
+    // }
 
     CALI_MARK_END(comp_small);
     CALI_MARK_END(comp);
@@ -598,10 +597,12 @@ int main(int argc, char *argv[]) {
         CALI_MARK_BEGIN(comp);
         CALI_MARK_BEGIN(comp_small);
 
-        memcpy(finalCol, &matrix[localMatrixSize-numRows+amountToShift], beginShiftAmount*sizeof(int));
+        memcpy(&rowMatrix[0], &matrix[localMatrixSize-numRows+amountToShift], beginShiftAmount*sizeof(int));
+        
         for (int i = beginShiftAmount; i < numRows; ++i) {
-            finalCol[i] = POS_INFINITY;
+            rowMatrix[i] = POS_INFINITY;
         }
+
         for (colNum = numColsPerWorker - 1; colNum > 0; --colNum) {
             memcpy(&matrix[colNum * numRows + beginShiftAmount], &matrix[colNum * numRows], (amountToShift) * sizeof(int));
             memcpy(&matrix[colNum*numRows], &matrix[(colNum-1)*numRows + amountToShift], beginShiftAmount * sizeof(int));
@@ -719,7 +720,7 @@ int main(int argc, char *argv[]) {
         CALI_MARK_BEGIN(comp);
         CALI_MARK_BEGIN(comp_small);
 
-        memcpy(&matrix[localMatrixSize - beginShiftAmount], &finalCol[0], beginShiftAmount * sizeof(int));
+        memcpy(&matrix[localMatrixSize - beginShiftAmount], &rowMatrix[0], beginShiftAmount * sizeof(int));
 
         CALI_MARK_END(comp_small);
         CALI_MARK_END(comp);
@@ -825,7 +826,6 @@ int main(int argc, char *argv[]) {
 
     delete[] matrix;
     delete[] rowMatrix;
-    delete[] finalCol;
 
     adiak::init(NULL);
     adiak::launchdate();                                  // launch date of the job
