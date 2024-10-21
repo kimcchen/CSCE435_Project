@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
             int rowIdx1 = rand() % numRows;
             int colIdx2 = rand() % numColsPerWorker;
             if (numColsPerWorker != 1) {
-                while (colIdx1 != colIdx2) { colIdx2 = rand() % numRows; }
+                while (colIdx1 == colIdx2) { colIdx2 = rand() % numColsPerWorker; }
             }
             int rowIdx2 = rand() % numRows;
             while (rowIdx1 == rowIdx2) { rowIdx2 = rand() % numRows; }
