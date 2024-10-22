@@ -437,25 +437,25 @@ We will collect them using Caliper and compare them using Thicket.
 
 ## 3. Caliper Instrumentation
 ### 3a. Calltrees
-- Bitonic Sort Calltree
+- Bitonic Sort Calltree  
 
-- Sample Sort Calltree
+- Sample Sort Calltree  
 
-- Merge Sort Calltree
+- Merge Sort Calltree  
 
-- Radix Sort Calltree
+- Radix Sort Calltree  
 
-- Column Sort Calltree
+- Column Sort Calltree  
     ![Column Sort Calltree](./column_sort/column_sort_calltree.png)
 
 ### 3b. Metadata
-- Bitonic Sort Metadata
+- Bitonic Sort Metadata  
 
-- Sample Sort Metadata
+- Sample Sort Metadata  
 
-- Merge Sort Metadata
+- Merge Sort Metadata  
 
-- Radix Sort Metadata
+- Radix Sort Metadata  
 
-- Column Sort Metadata
+- Column Sort Metadata  
     ![Column Sort Metadata](./column_sort/column_sort_metadata.png)
