@@ -17,7 +17,7 @@
 #
 ##First Executable Line
 #
-arr_size=65536
+arr_size=16777216
 processes=$1
 arr_type=$2
 

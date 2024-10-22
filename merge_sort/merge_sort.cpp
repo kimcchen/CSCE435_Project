@@ -200,14 +200,14 @@ int main (int argc, char *argv[]) {
 
     // gather the final sorted array
     if (rank == 0) {
-        printf("Sorted array: ");
-        printVector(sorted_arr);
+        // printf("Sorted array: ");
+        // printVector(sorted_arr);
         
         
         CALI_MARK_BEGIN(correctness_check);
         bool correct = true;
         for (int i = 1; i < arr_size; i++) {
-            if (arr[i] < arr[i - 1]) {
+            if (sorted_arr[i] < sorted_arr[i - 1]) {
                 correct = false;
                 break;
             }
