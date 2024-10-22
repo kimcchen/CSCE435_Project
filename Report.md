@@ -454,7 +454,8 @@ We will collect them using Caliper and compare them using Thicket.
 
 - Sample Sort Metadata  
 
-- Merge Sort Metadata  
+- Merge Sort Metadata
+    ![Merge Sort Metadata](./merge_sort/metadata.png)
 
 - Radix Sort Metadata  
 
