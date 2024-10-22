@@ -441,12 +441,13 @@ We will collect them using Caliper and compare them using Thicket.
 
 - Sample Sort Calltree  
 
-- Merge Sort Calltree
+- Merge Sort Calltree  
     ![Merge Sort Calltree](./merge_sort/calltree.png)  
 
 - Radix Sort Calltree  
 
 - Column Sort Calltree  
+    `data_init_X` is `data_init_runtime`  
     ![Column Sort Calltree](./column_sort/column_sort_calltree.png)
 
 ### 3b. Metadata
