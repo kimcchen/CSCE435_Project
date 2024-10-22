@@ -52,6 +52,9 @@ int main(int argc, char *argv[]) {
     int rank, num_procs;
     int colNum;
     MPI_Status status;
+
+    MPI_Request request;
+
     int sorted, isSorted;
 
     int amountToOffset,
@@ -295,15 +298,22 @@ int main(int argc, char *argv[]) {
     colNum = 0;
     offset = 0;
 
+    int numRequests = localMatrixSize / amountToSend;
+    MPI_Request *requests = new MPI_Request[numRequests];
+
     while (offset < localMatrixSize) {
         if (dest == num_procs) {
             dest = 0;
         }
-        // for (colNum )
-        MPI_Send(&matrix[offset], amountToSend, MPI_INT, dest, TRANSPOSE, MPI_COMM_WORLD);
+        MPI_Isend(&matrix[offset], amountToSend, MPI_INT, dest, TRANSPOSE, MPI_COMM_WORLD, &request);
+        requests[currIdx] = request;
+        ++currIdx;
         ++dest;
         offset = offset + amountToSend;
     }
+
+    // MPI_Wait(&request, &status);
+    // MPI_Barrier(MPI_COMM_WORLD);
 
     src = 0;
     offset = 0;
@@ -311,9 +321,14 @@ int main(int argc, char *argv[]) {
         if (src == num_procs) {
             src = 0;
         }
-        MPI_Recv(&matrix[offset], amountToSend, MPI_INT, src, TRANSPOSE, MPI_COMM_WORLD, &status);
+        MPI_Recv(&rowMatrix[offset], amountToSend, MPI_INT, src, TRANSPOSE, MPI_COMM_WORLD, &status);
         ++src;
         offset = offset + amountToSend;
+    }
+
+    // MPI_Wait(&request, &status);
+    for (int i = 0; i < numRequests; ++i) {
+        MPI_Wait(&requests[i], &status);
     }
 
     CALI_MARK_END(comm_large);
@@ -332,6 +347,8 @@ int main(int argc, char *argv[]) {
 
     CALI_MARK_BEGIN(comp);
     CALI_MARK_BEGIN(comp_small);
+
+    memcpy(&matrix[0], &rowMatrix[0], localMatrixSize * sizeof(int));
 
     offset = 0;
     colNum = 0;
@@ -441,13 +458,17 @@ int main(int argc, char *argv[]) {
     dest = 0;
     currIdx = 0;
     amountToSend = numRows / num_procs * numColsPerWorker;
-    // if (rank == MASTER) { printf("amountToSend: %d\n", amountToSend); }
+    numRequests = localMatrixSize / amountToSend;
+    delete[] requests;
+    requests = new MPI_Request[numRequests];
 
     for (dest = 0; offset < localMatrixSize; ++dest) {
         if (dest == num_procs) {
             dest = 0;
         }
-        MPI_Send((&matrix[offset]), amountToSend, MPI_INT, dest, UNTRANSPOSE, MPI_COMM_WORLD);
+        MPI_Isend((&matrix[offset]), amountToSend, MPI_INT, dest, UNTRANSPOSE, MPI_COMM_WORLD, &request);
+        requests[currIdx] = request;
+        ++currIdx;
         offset = offset + amountToSend;
     }
 
@@ -460,6 +481,10 @@ int main(int argc, char *argv[]) {
         }
         MPI_Recv((&rowMatrix[offset]), amountToSend, MPI_INT, src, UNTRANSPOSE, MPI_COMM_WORLD, &status);
         offset = offset + amountToSend;
+    }
+
+    for (int i = 0; i < numRequests; ++i) {
+        MPI_Wait(&requests[i], &status);
     }
 
     CALI_MARK_END(comm_large);
@@ -638,7 +663,7 @@ int main(int argc, char *argv[]) {
         // CALI_MARK_END(shift);
         matrix_shift_time_end = MPI_Wtime();
         matrix_shift_time = matrix_shift_time_end - matrix_shift_time_start;
-        printf("\nStep 6: Shifted Matrix\n");
+        printf("Step 6: Shifted Matrix\n");
         printf("time: %f\n\n", matrix_shift_time);
     }
 
@@ -826,6 +851,7 @@ int main(int argc, char *argv[]) {
 
     delete[] matrix;
     delete[] rowMatrix;
+    delete[] requests;
 
     adiak::init(NULL);
     adiak::launchdate();                                  // launch date of the job
@@ -846,5 +872,7 @@ int main(int argc, char *argv[]) {
     mgr.stop();
     mgr.flush();
 
+    MPI_Barrier(MPI_COMM_WORLD);
+
     MPI_Finalize();
-    }
+}

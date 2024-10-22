@@ -434,3 +434,28 @@ We will measure and compare the sorting times of:
     - Number of processes are 2, 4, 8, 16, 32, 64, 128, 256, 512, and 1024
 
 We will collect them using Caliper and compare them using Thicket.
+
+## 3. Caliper Instrumentation
+### 3a. Calltrees
+- Bitonic Sort Calltree  
+
+- Sample Sort Calltree  
+
+- Merge Sort Calltree  
+
+- Radix Sort Calltree  
+
+- Column Sort Calltree  
+    ![Column Sort Calltree](./column_sort/column_sort_calltree.png)
+
+### 3b. Metadata
+- Bitonic Sort Metadata  
+
+- Sample Sort Metadata  
+
+- Merge Sort Metadata  
+
+- Radix Sort Metadata  
+
+- Column Sort Metadata  
+    ![Column Sort Metadata](./column_sort/column_sort_metadata.png)
