@@ -441,7 +441,8 @@ We will collect them using Caliper and compare them using Thicket.
 
 - Sample Sort Calltree  
 
-- Merge Sort Calltree  
+- Merge Sort Calltree
+    ![Merge Sort Calltree](./merge_sort/calltree.png)  
 
 - Radix Sort Calltree  
 
