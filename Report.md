@@ -472,6 +472,7 @@ We will collect them using Caliper and compare them using Thicket.
   <img width="1358" alt="image" src="https://github.com/user-attachments/assets/bf0dec61-25b5-4a4a-8938-961166a13d00">
   The graph indicates that the speedup maxes out around 512 processes, with the speedup become significantly higher at around 128 processes. We can see from this that using 512 processes would be the most efficient for sorting a randomized array size of 2^16.
 - Sample Sort:
+  
   <img width="830" alt="Screenshot 2024-10-23 at 12 07 56 AM" src="https://github.com/user-attachments/assets/292fa36f-1d61-427c-81ae-ff3c10a81248">
   <img width="824" alt="Screenshot 2024-10-23 at 12 10 52 AM" src="https://github.com/user-attachments/assets/2d140fa1-a376-4875-89f9-afe239904045">
   Analysis:
