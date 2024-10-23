@@ -471,7 +471,7 @@ We will collect them using Caliper and compare them using Thicket.
 ## 4. Performance Evaluation
 
 - Bitonic Sort:
-  ![image](https://github.com/user-attachments/assets/3eafbfdf-f2ed-4943-a954-884f774c5f6b)
+  <img width="1358" alt="image" src="https://github.com/user-attachments/assets/bf0dec61-25b5-4a4a-8938-961166a13d00">
   The graph indicates that the speedup maxes out around 512 processes, with the speedup become significantly higher at around 128 processes. We can see from this that using 512 processes would be the most efficient for sorting a randomized array size of 2^16.
 - Radix Sort:
   - Limitations with the algorithm: Innefficiencies with the current implementation resulted in limited data for higher number of processors. Because of the nature of radix sort using counting sort under the hood, there is a lot of potential for uneven load balances between processors. (There can be more of one digits and a skewed distribution of buckets)
