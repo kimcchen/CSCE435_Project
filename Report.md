@@ -462,3 +462,11 @@ We will collect them using Caliper and compare them using Thicket.
 
 - Column Sort Metadata  
     ![Column Sort Metadata](./column_sort/column_sort_metadata.png)
+
+## 4. Performance Evaluation
+- Column Sort  
+    ![Strong Scaling Graph](./column_sort/plots/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg)  
+    The graph indicates that the algorithm is strongly scaled, with a bound of about 2 seconds due to the sequential runtime.  
+    ![Speedup Graph](./column_sort/plots/Speedup%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg)  
+    The graph indicates that the speedup maxes out at 512 processes, with about a 40x speedup compared to 2 processes. Because 512 is the maximum number of processes that can be used to sort 2^28 elements due to the restrictions, this means that using 512 processes would be the most efficient.  
+    More analysis and plots in the column_sort folder.
