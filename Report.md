@@ -445,8 +445,9 @@ We will collect them using Caliper and compare them using Thicket.
     ![Merge Sort Calltree](./merge_sort/calltree.png)  
 
 - Radix Sort Calltree  
-
+  <img width="708" alt="Screenshot 2024-10-22 at 5 59 43 PM" src="https://github.com/user-attachments/assets/91253424-0569-49a0-b2be-0d585fac01b1">
 - Column Sort Calltree  
+
     `data_init_X` is `data_init_runtime`  
     ![Column Sort Calltree](./column_sort/column_sort_calltree.png)
 
@@ -459,7 +460,7 @@ We will collect them using Caliper and compare them using Thicket.
     ![Merge Sort Metadata](./merge_sort/metadata.png)
 
 - Radix Sort Metadata  
-
+  <img width="912" alt="Screenshot 2024-10-22 at 11 25 50 PM" src="https://github.com/user-attachments/assets/86e0e3b3-5839-44b1-9945-33d454271993">
 - Column Sort Metadata  
     ![Column Sort Metadata](./column_sort/column_sort_metadata.png)
 
