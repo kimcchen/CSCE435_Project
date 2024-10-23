@@ -442,6 +442,7 @@ We will collect them using Caliper and compare them using Thicket.
 
 
 - Sample Sort Calltree
+  
   <img width="755" alt="Screenshot 2024-10-23 at 12 16 30 AM" src="https://github.com/user-attachments/assets/6b935be9-6627-4d6e-b87e-0fab49d38ab1">
   
 - Merge Sort Calltree  
@@ -476,15 +477,9 @@ We will collect them using Caliper and compare them using Thicket.
   The graph indicates that the speedup maxes out around 512 processes, with the speedup become significantly higher at around 128 processes. We can see from this that using 512 processes would be the most efficient for sorting a randomized array size of 2^16.
 - Sample Sort:
   
-  <img width="830" alt="Screenshot 2024-10-23 at 12 07 56 AM" src="https://github.com/user-attachments/assets/292fa36f-1d61-427c-81ae-ff3c10a81248">
-  <img width="824" alt="Screenshot 2024-10-23 at 12 10 52 AM" src="https://github.com/user-attachments/assets/2d140fa1-a376-4875-89f9-afe239904045">
-  
-  Analysis:
-    - Optimal performance is achieved at around 256 processes where we see the minimum execution time
-    - Beyond 256 processes, communication overhead dominates, causing significant performance degradation
-    - The gap between min and max times widens significantly after 256 processes, indicating load imbalance
-    - Small communication operations show similar scaling trends but with more pronounced variance at high process counts
-    - The algorithm shows good strong scaling up to 256 processes, with diminishing returns afterward
+  <img width="830" alt="Screenshot 2024-10-23 at 12 45 00 AM" src="https://github.com/user-attachments/assets/2352c0df-807d-43af-8878-853bed1174fe">
+
+  - Strong scaling speedup for different input types with problem size 2^22. Sample Sort shows good scaling up to 256 processes with sorted arrays achieving the best speedup. Performance degrades beyond 256 processes due to communication overhead.
 
 - Radix Sort:
   - Limitations with the algorithm: Innefficiencies with the current implementation resulted in limited data for higher number of processors. Because of the nature of radix sort using counting sort under the hood, there is a lot of potential for uneven load balances between processors. (There can be more of one digits and a skewed distribution of buckets)  
