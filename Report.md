@@ -437,8 +437,8 @@ We will collect them using Caliper and compare them using Thicket.
 
 ## 3. Caliper Instrumentation
 ### 3a. Calltrees
-- Bitonic Sort Calltree
-- <img width="473" alt="image" src="https://github.com/user-attachments/assets/61c303aa-33b2-42df-8f0d-43bc1dd63c71">
+- Bitonic Sort Calltree  
+    <img width="473" alt="image" src="https://github.com/user-attachments/assets/61c303aa-33b2-42df-8f0d-43bc1dd63c71">
 
 
 - Sample Sort Calltree  
@@ -449,14 +449,12 @@ We will collect them using Caliper and compare them using Thicket.
 - Radix Sort Calltree  
   <img width="708" alt="Screenshot 2024-10-22 at 5 59 43 PM" src="https://github.com/user-attachments/assets/91253424-0569-49a0-b2be-0d585fac01b1">
 - Column Sort Calltree  
-
     `data_init_X` is `data_init_runtime`  
     ![Column Sort Calltree](./column_sort/column_sort_calltree.png)
 
 ### 3b. Metadata
-- Bitonic Sort Metadata
-  
-<img width="827" alt="Screenshot 2024-10-22 at 11 47 22 PM" src="https://github.com/user-attachments/assets/26110a27-cba5-4047-b591-db9ac2cfa95e">
+- Bitonic Sort Metadata  
+    <img width="827" alt="Screenshot 2024-10-22 at 11 47 22 PM" src="https://github.com/user-attachments/assets/26110a27-cba5-4047-b591-db9ac2cfa95e">
 
 - Sample Sort Metadata  
 
@@ -474,12 +472,11 @@ We will collect them using Caliper and compare them using Thicket.
   <img width="1358" alt="image" src="https://github.com/user-attachments/assets/bf0dec61-25b5-4a4a-8938-961166a13d00">
   The graph indicates that the speedup maxes out around 512 processes, with the speedup become significantly higher at around 128 processes. We can see from this that using 512 processes would be the most efficient for sorting a randomized array size of 2^16.
 - Radix Sort:
-  - Limitations with the algorithm: Innefficiencies with the current implementation resulted in limited data for higher number of processors. Because of the nature of radix sort using counting sort under the hood, there is a lot of potential for uneven load balances between processors. (There can be more of one digits and a skewed distribution of buckets)
-- ![Whole Comp Time vs Processors](https://github.com/user-attachments/assets/a41b43d3-023d-4cc2-855f-c89532e7c3fe)
- The graph indicates that the current algorithm is strongly scaled to a certain point where we see diminishing returns at 512+ processors. The high runtime can be attributed to the current inefficient communication. 
-
-- ![Large Comm time](https://github.com/user-attachments/assets/7dd51ee5-6c2c-4ed5-9ca7-b499eae5d19a)
-*Labeled incorrecly as small* 
+  - Limitations with the algorithm: Innefficiencies with the current implementation resulted in limited data for higher number of processors. Because of the nature of radix sort using counting sort under the hood, there is a lot of potential for uneven load balances between processors. (There can be more of one digits and a skewed distribution of buckets)  
+  ![Whole Comp Time vs Processors](https://github.com/user-attachments/assets/a41b43d3-023d-4cc2-855f-c89532e7c3fe)  
+  The graph indicates that the current algorithm is strongly scaled to a certain point where we see diminishing returns at 512+ processors. The high runtime can be attributed to the current inefficient communication.  
+  ![Large Comm time](https://github.com/user-attachments/assets/7dd51ee5-6c2c-4ed5-9ca7-b499eae5d19a)  
+  *Labeled incorrecly as small* 
 - Column Sort  
     ![Strong Scaling Graph](./column_sort/plots/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg)  
     The graph indicates that the algorithm is strongly scaled, with a bound of about 2 seconds due to the sequential runtime.  
