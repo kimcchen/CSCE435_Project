@@ -470,6 +470,9 @@ We will collect them using Caliper and compare them using Thicket.
 
 ## 4. Performance Evaluation
 
+- Bitonic Sort:
+  ![image](https://github.com/user-attachments/assets/3eafbfdf-f2ed-4943-a954-884f774c5f6b)
+  The graph indicates that the speedup maxes out around 512 processes, with the speedup become significantly higher at around 128 processes. We can see from this that using 512 processes would be the most efficient for sorting a randomized array size of 2^16.
 - Radix Sort:
   - Limitations with the algorithm: Innefficiencies with the current implementation resulted in limited data for higher number of processors. Because of the nature of radix sort using counting sort under the hood, there is a lot of potential for uneven load balances between processors. (There can be more of one digits and a skewed distribution of buckets)
 - ![Whole Comp Time vs Processors](https://github.com/user-attachments/assets/a41b43d3-023d-4cc2-855f-c89532e7c3fe)
@@ -486,3 +489,4 @@ We will collect them using Caliper and compare them using Thicket.
 - Merge Sort
     ![Speedup Graph](./merge_sort/figs/2^26/ReverseSorted/main_speedup.png)
     Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
+
