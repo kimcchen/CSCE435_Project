@@ -483,7 +483,7 @@ We will collect them using Caliper and compare them using Thicket.
     ![Speedup Graph](./column_sort/plots/Speedup%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg)  
     The graph indicates that the speedup maxes out at 512 processes, with about a 40x speedup compared to 2 processes. Because 512 is the maximum number of processes that can be used to sort 2^28 elements due to the restrictions, this means that using 512 processes would be the most efficient.  
     More analysis and plots in the column_sort folder.
-- Merge Sort
+- Merge Sort  
     ![Speedup Graph](./merge_sort/figs/2^26/ReverseSorted/main_speedup.png)  
     Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
 
