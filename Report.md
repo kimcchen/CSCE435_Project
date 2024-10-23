@@ -441,8 +441,9 @@ We will collect them using Caliper and compare them using Thicket.
     <img width="473" alt="image" src="https://github.com/user-attachments/assets/61c303aa-33b2-42df-8f0d-43bc1dd63c71">
 
 
-- Sample Sort Calltree  
-
+- Sample Sort Calltree
+  <img width="755" alt="Screenshot 2024-10-23 at 12 16 30 AM" src="https://github.com/user-attachments/assets/6b935be9-6627-4d6e-b87e-0fab49d38ab1">
+  
 - Merge Sort Calltree  
     ![Merge Sort Calltree](./merge_sort/calltree.png)  
 
@@ -456,7 +457,9 @@ We will collect them using Caliper and compare them using Thicket.
 - Bitonic Sort Metadata  
     <img width="827" alt="Screenshot 2024-10-22 at 11 47 22 PM" src="https://github.com/user-attachments/assets/26110a27-cba5-4047-b591-db9ac2cfa95e">
 
-- Sample Sort Metadata  
+- Sample Sort Metadata
+  <img width="991" alt="Screenshot 2024-10-23 at 12 40 27 AM" src="https://github.com/user-attachments/assets/52fb003a-7d18-459d-be3b-d20caa39f85b">
+
 
 - Merge Sort Metadata
     ![Merge Sort Metadata](./merge_sort/metadata.png)
@@ -475,6 +478,7 @@ We will collect them using Caliper and compare them using Thicket.
   
   <img width="830" alt="Screenshot 2024-10-23 at 12 07 56 AM" src="https://github.com/user-attachments/assets/292fa36f-1d61-427c-81ae-ff3c10a81248">
   <img width="824" alt="Screenshot 2024-10-23 at 12 10 52 AM" src="https://github.com/user-attachments/assets/2d140fa1-a376-4875-89f9-afe239904045">
+  
   Analysis:
     - Optimal performance is achieved at around 256 processes where we see the minimum execution time
     - Beyond 256 processes, communication overhead dominates, causing significant performance degradation
