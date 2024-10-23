@@ -437,7 +437,9 @@ We will collect them using Caliper and compare them using Thicket.
 
 ## 3. Caliper Instrumentation
 ### 3a. Calltrees
-- Bitonic Sort Calltree  
+- Bitonic Sort Calltree
+- <img width="473" alt="image" src="https://github.com/user-attachments/assets/61c303aa-33b2-42df-8f0d-43bc1dd63c71">
+
 
 - Sample Sort Calltree  
 
@@ -452,7 +454,9 @@ We will collect them using Caliper and compare them using Thicket.
     ![Column Sort Calltree](./column_sort/column_sort_calltree.png)
 
 ### 3b. Metadata
-- Bitonic Sort Metadata  
+- Bitonic Sort Metadata
+  
+<img width="827" alt="Screenshot 2024-10-22 at 11 47 22 PM" src="https://github.com/user-attachments/assets/26110a27-cba5-4047-b591-db9ac2cfa95e">
 
 - Sample Sort Metadata  
 
