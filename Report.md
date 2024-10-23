@@ -469,6 +469,14 @@ We will collect them using Caliper and compare them using Thicket.
     ![Column Sort Metadata](./column_sort/column_sort_metadata.png)
 
 ## 4. Performance Evaluation
+
+- Radix Sort:
+  - Limitations with the algorithm: Innefficiencies with the current implementation resulted in limited data for higher number of processors. Because of the nature of radix sort using counting sort under the hood, there is a lot of potential for uneven load balances between processors. (There can be more of one digits and a skewed distribution of buckets)
+- ![Whole Comp Time vs Processors](https://github.com/user-attachments/assets/a41b43d3-023d-4cc2-855f-c89532e7c3fe)
+ The graph indicates that the current algorithm is strongly scaled to a certain point where we see diminishing returns at 512+ processors. The high runtime can be attributed to the current inefficient communication. 
+
+- ![Large Comm time](https://github.com/user-attachments/assets/7dd51ee5-6c2c-4ed5-9ca7-b499eae5d19a)
+*Labeled incorrecly as small* 
 - Column Sort  
     ![Strong Scaling Graph](./column_sort/plots/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg)  
     The graph indicates that the algorithm is strongly scaled, with a bound of about 2 seconds due to the sequential runtime.  
