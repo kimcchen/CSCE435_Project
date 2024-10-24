@@ -793,11 +793,12 @@ int main(int argc, char *argv[]) {
 
     if (rank % 2 == 1) {
         sorted = 1;
-        for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
-            int a = is_sorted(&matrix[colNum * numRows], &matrix[colNum * numRows + numRows]);
-            // if (rank == MASTER) { printf("%d, %d,", colNum, a); }
-            sorted = sorted && a;
-        }
+        // for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
+        //     int a = is_sorted(&matrix[colNum * numRows], &matrix[colNum * numRows + numRows]);
+        //     // if (rank == MASTER) { printf("%d, %d,", colNum, a); }
+        //     sorted = sorted && a;
+        // }
+        sorted = sorted && is_sorted(&matrix[0], &matrix[localMatrixSize]);
         MPI_Send(&matrix[0], 1, MPI_INT, rank - 1, CHECK_SORTED, MPI_COMM_WORLD);
         MPI_Recv(&isSorted, 1, MPI_INT, rank - 1, CHECK_SORTED, MPI_COMM_WORLD, &status);
         sorted = sorted && isSorted;
@@ -805,11 +806,12 @@ int main(int argc, char *argv[]) {
     }
     else {
         isSorted = 1;
-        for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
-            int a = is_sorted(&matrix[colNum * numRows], &matrix[colNum * numRows + numRows]);
-            // if (rank == MASTER) { printf("%d, %d | ", colNum, a); }
-            isSorted = isSorted && a;
-        }
+        // for (colNum = 0; colNum < numColsPerWorker; ++colNum) {
+        //     int a = is_sorted(&matrix[colNum * numRows], &matrix[colNum * numRows + numRows]);
+        //     // if (rank == MASTER) { printf("%d, %d | ", colNum, a); }
+        //     isSorted = isSorted && a;
+        // }
+        isSorted && is_sorted(&matrix[0], &matrix[localMatrixSize]);
         MPI_Recv(&sorted, 1, MPI_INT, rank + 1, CHECK_SORTED, MPI_COMM_WORLD, &status);
         if (matrix[localMatrixSize-1] > sorted) {
             sorted = 0;
