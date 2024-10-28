@@ -15,30 +15,34 @@
 std::vector<int> merge(std::vector<int> arr1, std::vector<int> arr2){
     size_t size_1 = arr1.size();
     size_t size_2 = arr2.size();
-    std::vector<int> final_arr;
+    std::vector<int> final_arr(size_1 + size_2);
     int i = 0;
     int j = 0;
+    int k = 0;
 
     while ((i < size_1) && (j < size_2)){
         if (arr1[i] < arr2[j]){
-            final_arr.push_back(arr1[i]);
+            final_arr.at(k) = arr1[i];
             i += 1;
         }
         else{
-            final_arr.push_back(arr2[j]);
+            final_arr.at(k) = arr2[j];
             j += 1;
         }
+        k += 1;
     }
     
     // copy leftover elements
     while (i < size_1){
-        final_arr.push_back(arr1[i]);
+        final_arr.at(k) = arr1[i];
         i += 1;
+        k += 1;
     }
         
     while (j < size_2){
-        final_arr.push_back(arr2[j]);
+        final_arr.at(k) = arr2[j];
         j += 1;
+        k += 1;
     }
         
     return final_arr;
@@ -80,12 +84,11 @@ int main (int argc, char *argv[]) {
 
     // initialize MPI
     int rank, num_procs;
-    MPI_Init(&argc,&argv);
-    MPI_Comm_rank(MPI_COMM_WORLD,&rank);
-    MPI_Comm_size(MPI_COMM_WORLD,&num_procs);
+    const char *input_type;
+    
 
     // define caliper region names
-    const char* whole_program = "main";
+    // const char* whole_program = "main";
     const char* data_init_runtime = "data_init_runtime";
     const char* comm = "comm";
     const char* comm_large = "comm_large";
@@ -93,53 +96,52 @@ int main (int argc, char *argv[]) {
     const char* comp_large = "comp_large";
     const char* correctness_check = "correctness_check";
 
-    const char *input_type;
-    std::vector<int> arr(arr_size);
-    int worker_size = arr_size / num_procs;
-    std::vector<int> worker_arr(worker_size);
+    MPI_Init(&argc,&argv);
+    MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+    MPI_Comm_size(MPI_COMM_WORLD,&num_procs);
 
-    // WHOLE PROGRAM STARTS HERE
-    CALI_MARK_BEGIN(whole_program);
-
-    // Create caliper ConfigManager object
     cali::ConfigManager mgr;
     mgr.start();
 
-    // DATA GENERATION STARTS HERE
+    // DATA INITIALIZATION REGION
     CALI_MARK_BEGIN(data_init_runtime);
+
+    int worker_size = arr_size / num_procs;
+    std::vector<int> worker_arr(worker_size);
 
     if (arr_type == 0) {
         int start = rank * worker_size;
         for (int i = 0; i < worker_size; i++) {
-            arr[start + i] = start + i;
+            worker_arr[i] = start + i;
         }
         input_type = "Sorted";
     }
     else if (arr_type == 1) {
         int start = rank * worker_size;
         for (int i = 0; i < worker_size; i++) {
-            arr[start + i] = rand() % arr_size;
+            worker_arr[i] = rand() % arr_size;
         }
         input_type = "Random";
     }
     else if (arr_type == 2) {
         int start_value = arr_size - (rank * worker_size);
-        int start_idx = rank * worker_size;
+        // int start_idx = rank * worker_size;
         for (int i = 0; i < worker_size; i++) {
-            arr[start_idx + i] = start_value - i;
+            // arr[start_idx + i] = start_value - i;
+            worker_arr[i] = start_value - i;
         }
         input_type = "ReverseSorted";
     }
     else if (arr_type == 3) {
         int start = rank * worker_size;
         for (int i = 0; i < worker_size; i++) {
-            arr[start + i] = start + i;
+            worker_arr[i] = start + i;
         }
 
         int numPertubed = std::ceil(worker_size*0.01);
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dist(start, start + i);
+        std::uniform_int_distribution<> dist(0, worker_size - 1);
         for (int i = 0; i < numPertubed; ++i) {
             int idx_1 = dist(gen);
             int idx_2 = dist(gen);
@@ -148,72 +150,71 @@ int main (int argc, char *argv[]) {
                 idx_2 = dist(gen);
             }
 
-            std::swap(arr[idx_1], arr[idx_2]);
+            std::swap(worker_arr[idx_1], worker_arr[idx_2]);
         }
 
         input_type = "1_perc_perturbed";
     }
 
     CALI_MARK_END(data_init_runtime);
-    // DATA GENERATION PROCESS ENDS HERE
+    
 
-    // COMMUNICATION PART STARTS HERE
-
-    // scatter array to all processes
-    MPI_Scatter(arr.data(), worker_size, MPI_INT, worker_arr.data(), worker_size, MPI_INT, 0, MPI_COMM_WORLD);
+    std::vector<int> arr(arr_size);
 
     // sort local copy
+    // COMPUTATION REGION
+    CALI_MARK_BEGIN(comp);
+    CALI_MARK_BEGIN(comp_large);
     std::vector<int> sorted_arr = merge_sort(worker_arr);
+    CALI_MARK_END(comp_large);
+    CALI_MARK_END(comp);
 
-    // Merge sorted pieces back together
+    // merge sorted pieces back together
+    CALI_MARK_BEGIN(comm);
+    CALI_MARK_BEGIN(comm_large);
     int step = 1;
     while (step < num_procs) {
         if (rank % (2 * step) == 0) {
             if (rank + step < num_procs) {
-                // Receive sorted array from another process
-                int received_size = worker_size * step;
+                // receive sorted array from another process
+                int received_size = worker_size;
                 std::vector<int> received_array(received_size);
                 MPI_Recv(received_array.data(), received_size, MPI_INT, rank + step, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-                // Merge the received array with the local array
+                // merge the received array with the local array
                 sorted_arr = merge(sorted_arr, received_array);
                 worker_size += received_size;
             }
-        } else {
-            // Send the sorted array to another process
+        } 
+        else {
+            // send the sorted array to another process
             int target = rank - step;
             MPI_Send(sorted_arr.data(), worker_size, MPI_INT, target, 0, MPI_COMM_WORLD);
             break;
         }
+        
         step *= 2;
     }
+    CALI_MARK_END(comm_large);
+    CALI_MARK_END(comm);
 
-    // Master process gathers the final sorted array
+    // gather the final sorted array
     if (rank == 0) {
-        MPI_Gather(sorted_arr.data(), worker_size, MPI_INT, array.data(), worker_size, MPI_INT, 0, MPI_COMM_WORLD);
-    }
-
-
-    // CORRECTNESS CHECK STARTS HERE
-    CALI_MARK_BEGIN(correctness_check);
-    if (rank == 0) {
+        // printf("Sorted array: ");
+        // printVector(sorted_arr);
+        
+        
+        CALI_MARK_BEGIN(correctness_check);
         bool correct = true;
         for (int i = 1; i < arr_size; i++) {
-            if (arr[i] < arr[i - 1]) {
+            if (sorted_arr[i] < sorted_arr[i - 1]) {
                 correct = false;
                 break;
             }
         }
-        printf("Final array is sorted: %f \n", correct);
+        printf("Final array is sorted: %s\n", correct ? "true" : "false");
+        CALI_MARK_END(correctness_check);
     }
-
-    CALI_MARK_END(correctness_check);
-    // CORRECTNESS CHECK ENDS HERE
-
-
-    CALI_MARK_END(whole_program);
-    // WHOLE PROGRAM ENDS HERE
-
 
 
     adiak::init(NULL);
@@ -238,5 +239,5 @@ int main (int argc, char *argv[]) {
     mgr.flush();
 
     MPI_Finalize();
-
+    return 0;
 }

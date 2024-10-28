@@ -1,0 +1,37 @@
+#!/bin/bash
+
+module load intel/2020b
+module load CMake/3.12.1
+module load GCCcore/8.3.0
+module load PAPI/6.0.0
+
+sbatch mpi_2_26_1024_random.grace_job
+sbatch mpi_2_26_1024_sorted.grace_job
+sbatch mpi_2_28_16_random.grace_job
+sbatch mpi_2_28_16_sorted.grace_job
+sbatch mpi_2_28_16_reverse_sorted.grace_job
+sbatch mpi_2_28_16_perturbed.grace_job
+sbatch mpi_2_28_32_random.grace_job
+sbatch mpi_2_28_32_sorted.grace_job
+sbatch mpi_2_28_32_reverse_sorted.grace_job
+sbatch mpi_2_28_32_perturbed.grace_job
+sbatch mpi_2_28_64_random.grace_job
+sbatch mpi_2_28_64_sorted.grace_job
+sbatch mpi_2_28_64_reverse_sorted.grace_job
+sbatch mpi_2_28_64_perturbed.grace_job
+sbatch mpi_2_28_128_random.grace_job
+sbatch mpi_2_28_128_sorted.grace_job
+sbatch mpi_2_28_128_reverse_sorted.grace_job
+sbatch mpi_2_28_128_perturbed.grace_job
+sbatch mpi_2_28_256_random.grace_job
+sbatch mpi_2_28_256_sorted.grace_job
+sbatch mpi_2_28_256_reverse_sorted.grace_job
+sbatch mpi_2_28_256_perturbed.grace_job
+sbatch mpi_2_28_512_random.grace_job
+sbatch mpi_2_28_512_sorted.grace_job
+sbatch mpi_2_28_512_reverse_sorted.grace_job
+sbatch mpi_2_28_512_perturbed.grace_job
+sbatch mpi_2_28_1024_random.grace_job
+sbatch mpi_2_28_1024_sorted.grace_job
+sbatch mpi_2_28_1024_reverse_sorted.grace_job
+sbatch mpi_2_28_1024_perturbed.grace_job

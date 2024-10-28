@@ -1,0 +1,38 @@
+{
+    "options": [
+        { "name"        : "cache_misses",
+          "description" : "Cache misses",
+          "category"    : "metric",
+          "services"    : [ "papi" ],
+          "config"      : { "CALI_PAPI_COUNTERS": "PAPI_L1_DCM,PAPI_L2_DCM" },
+          "query"       : [
+              { "level": "local", "select": [ 
+                  "sum(sum#papi.PAPI_L1_DCM)",
+                  "sum(sum#papi.PAPI_L2_DCM)",
+                  "inclusive_sum(sum#papi.PAPI_L1_DCM)",
+                  "inclusive_sum(sum#papi.PAPI_L2_DCM)"
+                ] 
+              },
+              { "level": "cross", "select": [
+                  "min(sum#sum#papi.PAPI_L1_DCM) as \"Min L1 misses/rank (exc)\"",
+                  "max(sum#sum#papi.PAPI_L1_DCM) as \"Max L1 misses/rank (exc)\"",
+                  "avg(sum#sum#papi.PAPI_L1_DCM) as \"Avg L1 misses/rank (exc)\"",
+                  "sum(sum#sum#papi.PAPI_L1_DCM) as \"Total L1 misses (exc)\"",
+                  "min(sum#sum#papi.PAPI_L2_DCM) as \"Min L2 misses/rank (exc)\"",
+                  "max(sum#sum#papi.PAPI_L2_DCM) as \"Max L2 misses/rank (exc)\"",
+                  "avg(sum#sum#papi.PAPI_L2_DCM) as \"Avg L2 misses/rank (exc)\"",
+                  "sum(sum#sum#papi.PAPI_L2_DCM) as \"Total L2 misses (exc)\"",
+                  "min(inclusive#sum#papi.PAPI_L1_DCM) as \"Min L1 misses/rank\"",
+                  "max(inclusive#sum#papi.PAPI_L1_DCM) as \"Max L1 misses/rank\"",
+                  "avg(inclusive#sum#papi.PAPI_L1_DCM) as \"Avg L1 misses/rank\"",
+                  "sum(inclusive#sum#papi.PAPI_L1_DCM) as \"Total L1 misses\"",
+                  "min(inclusive#sum#papi.PAPI_L2_DCM) as \"Min L2 misses/rank\"",
+                  "max(inclusive#sum#papi.PAPI_L2_DCM) as \"Max L2 misses/rank\"",
+                  "avg(inclusive#sum#papi.PAPI_L2_DCM) as \"Avg L2 misses/rank\"",
+                  "sum(inclusive#sum#papi.PAPI_L2_DCM) as \"Total L2 misses\""
+                ]
+              }
+          ]
+        }
+    ]
+}
