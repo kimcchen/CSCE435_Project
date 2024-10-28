@@ -67,6 +67,33 @@ vector<int> create_random_int_array(int len)
     for (int i = 0; i < len; i++)
         ret[i] = rand() % 1000;
     return ret;
+
+    // vector<int> ret(len);
+    // // Fill the vector with sequential integers starting from 1
+    // for (int i = 0; i < len; i++)
+    //     ret[i] = i;
+
+    // return ret;
+
+    // vector<int> ret(len);
+
+    // // Fill the vector with sequential integers in reverse order
+    // for (int i = 0; i < len; i++)
+    //     ret[i] = len - i;
+
+    // return ret;
+
+    // vector<int> ret(len);
+    // for (int i=0; i< len; i++) {
+    //     ret.push_back(i);
+    // }
+    // int num_swaps = std::max(1, len / 100);
+    // for (int i=0; i<num_swaps; i++) {
+    //     int swap_pos = rand() % (len - 1);
+    //     std::swap(ret[swap_pos], ret[swap_pos + 1]);
+    // }
+    // return ret;
+
 } // create_random_int_array
 
 // Return the value of the bit_positionth bit in the_int.
@@ -286,7 +313,7 @@ int main(int argc, char **argv)
     adiak::libraries();                                           // Libraries used
     adiak::cmdline();                                             // Command line used to launch the job
     adiak::clustername();                                         // Name of the cluster
-    adiak::value("algorithm", "column_sort");                         // The name of the algorithm you are using (e.g., "merge", "bitonic")
+    adiak::value("algorithm", "bitonic_sort");                         // The name of the algorithm you are using (e.g., "merge", "bitonic")
     adiak::value("programming_model", "mpi");         // e.g. "mpi"
     adiak::value("data_type", "int");                         // The datatype of input elements (e.g., double, int, float)
     adiak::value("size_of_data_type", sizeof(int));         // sizeof(datatype) of input elements in bytes (e.g., 1, 2, 4)
