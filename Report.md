@@ -481,6 +481,10 @@ We will collect them using Caliper and compare them using Thicket.
 
   - Strong scaling speedup for different input types with problem size 2^22. Sample Sort shows good scaling up to 256 processes with sorted arrays achieving the best speedup. Performance degrades beyond 256 processes due to communication overhead.
 
+- Merge Sort  
+    ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/figs/2^26/ReverseSorted/main_speedup.png?raw=true)  
+    Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
+
 - Radix Sort:
   - Limitations with the algorithm: Innefficiencies with the current implementation resulted in limited data for higher number of processors. Because of the nature of radix sort using counting sort under the hood, there is a lot of potential for uneven load balances between processors. (There can be more of one digits and a skewed distribution of buckets)  
   ![Whole Comp Time vs Processors](https://github.com/user-attachments/assets/a41b43d3-023d-4cc2-855f-c89532e7c3fe)  
@@ -493,32 +497,18 @@ We will collect them using Caliper and compare them using Thicket.
     ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots/Speedup%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg?raw=true)  
     The graph indicates that the speedup maxes out at 512 processes, with about a 40x speedup compared to 2 processes. Because 512 is the maximum number of processes that can be used to sort 2^28 elements due to the restrictions, this means that using 512 processes would be the most efficient.  
     More analysis and plots in the column_sort folder.
-- Merge Sort  
-    ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/figs/2^26/ReverseSorted/main_speedup.png?raw=true)  
-    Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
 
 ## 5. Presentation
 
-- Bitonic Sort
+- Bitonic Sort<br/>
 
-- Sample Sort
+- Sample Sort<br/>
 
-- Merge Sort
+- Merge Sort<br/>
 
-- Radix Sort
+- Radix Sort<br/>
 
-- Column Sort  
-    - <strong>comm Speedup Graphs</strong><br/>
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^16">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^18">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^20">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^22">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^24">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^26">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^28"><br/>
-        INSERT COMM SPEEDUP ANALYSIS HERE
-        <br/>
-        <br/>
+- Column Sort<br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^16">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^18">
@@ -530,20 +520,21 @@ We will collect them using Caliper and compare them using Thicket.
         INSERT COMM STRONG SCALING ANALYSIS HERE
         <br/>
         <br/>
+    - <strong>comm Speedup Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^28"><br/>
+        INSERT COMM SPEEDUP ANALYSIS HERE
+        <br/>
+        <br/>
+
     - <strong>comm Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Weak%20Scaling%20of%20comm%20for%20sorting%20elements.jpg?raw=true" width=33% alt="Weak Scaling Graph comm 2^16"><br/>
         INSERT COMM WEAK SCALING ANALYSIS HERE
-        <br/>
-        <br/>
-    - <strong>comp_large Speedup Graphs</strong><br/>
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^16">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^18">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^20">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^22">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^24">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^26">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^28"><br/>
-        INSERT comp_large SPEEDUP ANALYSIS HERE
         <br/>
         <br/>
     - <strong>comp_large Strong Scaling Graphs</strong><br/>
@@ -557,9 +548,32 @@ We will collect them using Caliper and compare them using Thicket.
         INSERT comp_large STRONG SCALING ANALYSIS HERE
         <br/>
         <br/>
+    - <strong>comp_large Speedup Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^28"><br/>
+        INSERT comp_large SPEEDUP ANALYSIS HERE
+        <br/>
+        <br/>
     - <strong>comp_large Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Weak%20Scaling%20of%20comp_large%20for%20sorting%20elements.jpg?raw=true" width=33% alt="Weak Scaling Graph comp_large 2^16"><br/>
         INSERT comp_large WEAK SCALING ANALYSIS HERE
+        <br/>
+        <br/>
+
+    - <strong>main Strong Scaling Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^28"><br/>
+        INSERT main STRONG SCALING ANALYSIS HERE
         <br/>
         <br/>
     - <strong>main Speedup Graphs</strong><br/>
@@ -573,17 +587,7 @@ We will collect them using Caliper and compare them using Thicket.
         INSERT main SPEEDUP ANALYSIS HERE
         <br/>
         <br/>
-    - <strong>main Strong Scaling Graphs</strong><br/>
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^16">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^18">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^20">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^22">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^24">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^26">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^28"><br/>
-        INSERT main STRONG SCALING ANALYSIS HERE
-        <br/>
-        <br/>
+
     - <strong>main Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Weak%20Scaling%20of%20main%20for%20sorting%20elements.jpg?raw=true" width=33% alt="Weak Scaling Graph main 2^16"><br/>
         INSERT main WEAK SCALING ANALYSIS HERE
