@@ -128,56 +128,141 @@ We will use the Grace cluster on the TAMU HPRC.
 - Sample Sort Pseudocode
     ```
     func parallel_sample_sort(local_data):
-        // Initialize MPI environment
-        MPI_Init()
+        // Helper Functions
+        function initialize_array(array_size, input_type):
+            array = new array[array_size]
+            
+            if input_type == "random":
+                for i = 0 to array_size - 1:
+                    array[i] = random_number()
+                    
+            else if input_type == "sorted":
+                for i = 0 to array_size - 1:
+                    array[i] = i
+                    
+            else if input_type == "reverse_sorted":
+                for i = 0 to array_size - 1:
+                    array[i] = array_size - i - 1
+                    
+            else if input_type == "perturbed":
+                // Create sorted array first
+                for i = 0 to array_size - 1:
+                    array[i] = i
+                // Perturb 1% of elements
+                num_perturb = array_size / 100
+                for i = 0 to num_perturb - 1:
+                    idx1 = random(0, array_size - 1)
+                    idx2 = random(0, array_size - 1)
+                    swap(array[idx1], array[idx2])
+            
+            return array
 
-        // Get total number of processes and rank of each process
-        int num_procs, rank
-        MPI_Comm_size(MPI_COMM_WORLD, &num_procs)
-        MPI_Comm_rank(MPI_COMM_WORLD, &rank)
+        function get_bucket_index(value, splitters):
+            bucket = 0
+            while bucket < splitters.length AND value > splitters[bucket]:
+                bucket += 1
+            return bucket
 
-        // Step 1: Sort local data locally
-        local_data = sort(local_data)
-
-        // Step 2: Choose 'p' samples from the sorted local data
-        samples = select_samples(local_data, num_procs)
-
-        // Step 3: Gather all samples to the root process
-        all_samples = []
-        MPI_Gather(samples, num_procs, MPI_INT, all_samples, num_procs, MPI_INT, root=0, MPI_COMM_WORLD)
-
-        // Step 4: Root process sorts the gathered samples and selects splitters
-        splitters = []
-        if rank == 0:
-            all_samples_sorted = sort(all_samples)
-            splitters = select_splitters(all_samples_sorted, num_procs)
-
-        // Step 5: Broadcast splitters to all processes
-        MPI_Bcast(splitters, num_procs, MPI_INT, root=0, MPI_COMM_WORLD)
-
-        // Step 6: Each process redistributes its local data based on the splitters
-        buckets = distribute_data(local_data, splitters, num_procs)
-
-        // Step 7: Each process sends its buckets to the appropriate processes
-        for i = 0 to num_procs - 1:
-            // Send and receive buckets to/from each process
-            send_bucket_to_process(buckets[i], i)
-            receive_bucket_from_process(i)
-
-        // Step 8: Merge the received buckets
-        local_data = merge(received_buckets)
-
-        // Step 9: Perform local sort on the merged data
-        local_data = sort(local_data)
-
-        // Step 10: Gather sorted data on the root process
-        sorted_data = []
-        MPI_Gather(local_data, len(local_data), MPI_INT, sorted_data, len(local_data), MPI_INT, root=0, MPI_COMM_WORLD)
-
-        // Finalize MPI environment
-        MPI_Finalize()
-
-        return sorted_data
+        // Main Algorithm
+        procedure parallel_sample_sort(array_size, input_type):
+            // Initialize MPI
+            rank = MPI_Get_rank()
+            num_procs = MPI_Get_size()
+            root = 0
+            
+            // Validate input
+            if array_size < num_procs:
+                print "Error: Array size must be >= number of processors"
+                return
+            
+            // Calculate local sizes
+            base_size = array_size / num_procs
+            remainder = array_size % num_procs
+            local_size = base_size + (rank < remainder ? 1 : 0)
+            
+            // Initialize and distribute data
+            if rank == root:
+                input_array = initialize_array(array_size, input_type)
+                
+            local_array = new array[local_size]
+            MPI_Scatter(input_array, local_size, local_array)
+            
+            // Local sort
+            sort(local_array)
+            
+            // Sample selection
+            samples_per_proc = 3
+            local_samples = new array[num_procs - 1]
+            if local_size > 0:
+                stride = local_size / num_procs
+                for i = 0 to num_procs - 2:
+                    idx = min(floor(stride * (i + 1)), local_size - 1)
+                    local_samples[i] = local_array[idx]
+            else:
+                fill(local_samples, MAX_INT)
+            
+            // Gather samples and select splitters
+            if rank == root:
+                global_samples = new array[num_procs * (num_procs - 1)]
+                
+            MPI_Gather(local_samples, num_procs - 1, global_samples)
+            
+            if rank == root:
+                sort(global_samples)
+                // Select evenly spaced splitters
+                for i = 0 to num_procs - 2:
+                    idx = ((i + 1) * global_samples.length) / num_procs
+                    local_samples[i] = global_samples[idx]
+                    
+            // Broadcast splitters to all processes
+            MPI_Broadcast(local_samples)
+            
+            // Distribute elements to buckets
+            temp_buckets = array of num_procs empty arrays
+            for each element in local_array:
+                bucket = get_bucket_index(element, local_samples)
+                temp_buckets[bucket].append(element)
+            
+            // Prepare for all-to-all communication
+            max_bucket_size = local_size + 1
+            buckets = new array[max_bucket_size * num_procs]
+            
+            for i = 0 to num_procs - 1:
+                buckets[i * max_bucket_size] = temp_buckets[i].length
+                copy(temp_buckets[i], buckets[i * max_bucket_size + 1])
+            
+            // All-to-all exchange
+            bucket_buffer = new array[max_bucket_size * num_procs]
+            MPI_Alltoall(buckets, max_bucket_size, bucket_buffer)
+            
+            // Process received data
+            merged_data = empty array
+            for i = 0 to num_procs - 1:
+                count = bucket_buffer[i * max_bucket_size]
+                start = i * max_bucket_size + 1
+                end = start + count
+                merged_data.append(bucket_buffer[start:end])
+            
+            // Sort merged data
+            sort(merged_data)
+            
+            // Final gather
+            if rank == root:
+                final_array = new array[array_size]
+                
+            MPI_Gather(merged_data, merged_data.length, final_array)
+            
+            // Verify sort (only root)
+            if rank == root:
+                is_sorted = true
+                for i = 1 to array_size - 1:
+                    if final_array[i - 1] > final_array[i]:
+                        is_sorted = false
+                        break
+                        
+                print is_sorted ? "Array sorted correctly" : "Sort failed"
+            
+            MPI_Finalize()
     end func
     ```
 - Merge Sort Pseudocode
