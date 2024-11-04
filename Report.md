@@ -611,6 +611,56 @@ We will collect them using Caliper and compare them using Thicket.
 - Merge Sort<br/>
 
 - Radix Sort<br/>
+- Radix Sort<br/>
+ - <strong>comm Strong Scaling Graphs</strong><br/>
+     ADD GRAPHS
+      <br/>
+     GRAPH ANALYSIS
+     <br/>
+    - <strong>comm Speedup Graphs</strong><br/>
+      ADD GRAPHS
+       <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+    - <strong>comm Weak Scaling Graph</strong><br/>
+        ADD GRAPH <br/>
+        ADD GRAPH ANALYSIS
+        <br/>
+
+    - <strong>comp_large Strong Scaling Graphs</strong><br/>
+    ADD GRAPHS
+      <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+    - <strong>comp_large Speedup Graphs</strong><br/>
+      ADD GRAPHS
+  <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+    - <strong>comp_large Weak Scaling Graph</strong><br/>
+      ADD GRAPH <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+
+    - <strong>main Strong Scaling Graphs</strong><br/>
+       ADD GRAPHS
+  <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+    - <strong>main Speedup Graphs</strong><br/>
+       ADD GRAPHS <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+      <strong>main Weak Scaling Graph</strong><br/>
+       ADD GRAPH <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+
+      <strong>Cache Misses Graphs</strong><br/>
+      ADD GRAPHS <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+    - <strong>Additional Notes</strong><br/>
 
 - Column Sort<br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
