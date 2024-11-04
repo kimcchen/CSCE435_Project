@@ -589,6 +589,13 @@ We will collect them using Caliper and compare them using Thicket.
 - Sample Sort<br/>
 
 - Merge Sort<br/>
+    - <strong>comm Strong Scaling Graphs</strong><br/>
+    
+
+    - <strong>Cache Miss Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/plots_cm/Total%20L1%20misses.jpg?raw=true" width="33%" alt="L1 Misses Graph">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/plots_cm/Total%20L2%20misses.jpg?raw=true" width="33%" alt="L2 Misses Graph"><br/>
+        The behavior for the cache miss plots is as expected. We can see two separate sets of parallel lines on both plots that indicate that as the input size increase the number of cache misses also increase. Furthermore, we can also see that as the number of processes increase, the number of cache misses also increases. Both these observations align with expectations as with more data and more threads accessing that data, the number of cache misses will increase. Finally, we also see, based on the scale of the plots, that the number of L2 cache misses is greater than the number of L1 cache misses, which makes sense as the L1 cache is accessed before the L2 cache and has less memory.
 
 - Radix Sort<br/>
 
