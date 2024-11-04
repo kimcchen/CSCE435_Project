@@ -446,13 +446,13 @@ We will collect them using Caliper and compare them using Thicket.
   <img width="755" alt="Screenshot 2024-10-23 at 12 16 30 AM" src="https://github.com/user-attachments/assets/6b935be9-6627-4d6e-b87e-0fab49d38ab1">
   
 - Merge Sort Calltree  
-    ![Merge Sort Calltree](./merge_sort/calltree.png)  
+    ![Merge Sort Calltree](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/calltree.png?raw=true)  
 
 - Radix Sort Calltree  
   <img width="708" alt="Screenshot 2024-10-22 at 5 59 43 PM" src="https://github.com/user-attachments/assets/91253424-0569-49a0-b2be-0d585fac01b1">
 - Column Sort Calltree  
     `data_init_X` is `data_init_runtime`  
-    ![Column Sort Calltree](./column_sort/column_sort_calltree.png)
+    ![Column Sort Calltree](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/column_sort_calltree.png?raw=true)
 
 ### 3b. Metadata
 - Bitonic Sort Metadata  
@@ -468,7 +468,7 @@ We will collect them using Caliper and compare them using Thicket.
 - Radix Sort Metadata  
   <img width="912" alt="Screenshot 2024-10-22 at 11 25 50 PM" src="https://github.com/user-attachments/assets/86e0e3b3-5839-44b1-9945-33d454271993">
 - Column Sort Metadata  
-    ![Column Sort Metadata](./column_sort/column_sort_metadata.png)
+    <img alt="Column Sort Metadata" src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/column_sort_metadata.png?raw=true">
 
 ## 4. Performance Evaluation
 
@@ -488,13 +488,13 @@ We will collect them using Caliper and compare them using Thicket.
   ![Large Comm time](https://github.com/user-attachments/assets/7dd51ee5-6c2c-4ed5-9ca7-b499eae5d19a)  
   *Labeled incorrecly as small* 
 - Column Sort  
-    ![Strong Scaling Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg)  
+    ![Strong Scaling Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg?raw=true)  
     The graph indicates that the algorithm is strongly scaled, with a bound of about 2 seconds due to the sequential runtime.  
-    ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots/Speedup%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg)  
+    ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots/Speedup%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg?raw=true)  
     The graph indicates that the speedup maxes out at 512 processes, with about a 40x speedup compared to 2 processes. Because 512 is the maximum number of processes that can be used to sort 2^28 elements due to the restrictions, this means that using 512 processes would be the most efficient.  
     More analysis and plots in the column_sort folder.
 - Merge Sort  
-    ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/figs/2^26/ReverseSorted/main_speedup.png)  
+    ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/figs/2^26/ReverseSorted/main_speedup.png?raw=true)  
     Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
 
 ## 5. Presentation
