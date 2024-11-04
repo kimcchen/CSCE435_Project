@@ -126,8 +126,8 @@ int main(int argc, char *argv[]) {
     }
 
     MPI_Scatterv(input_array.data(), sendcounts.data(), displs.data(),
-                 MPI_INT, local_array.data(), my_size, MPI_INT,
-                 root, MPI_COMM_WORLD);
+                MPI_INT, local_array.data(), my_size, MPI_INT,
+                root, MPI_COMM_WORLD);
     CALI_MARK_END("comm_small");
     CALI_MARK_END("comm");
 

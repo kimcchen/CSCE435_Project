@@ -128,56 +128,141 @@ We will use the Grace cluster on the TAMU HPRC.
 - Sample Sort Pseudocode
     ```
     func parallel_sample_sort(local_data):
-        // Initialize MPI environment
-        MPI_Init()
+        // Helper Functions
+        function initialize_array(array_size, input_type):
+            array = new array[array_size]
+            
+            if input_type == "random":
+                for i = 0 to array_size - 1:
+                    array[i] = random_number()
+                    
+            else if input_type == "sorted":
+                for i = 0 to array_size - 1:
+                    array[i] = i
+                    
+            else if input_type == "reverse_sorted":
+                for i = 0 to array_size - 1:
+                    array[i] = array_size - i - 1
+                    
+            else if input_type == "perturbed":
+                // Create sorted array first
+                for i = 0 to array_size - 1:
+                    array[i] = i
+                // Perturb 1% of elements
+                num_perturb = array_size / 100
+                for i = 0 to num_perturb - 1:
+                    idx1 = random(0, array_size - 1)
+                    idx2 = random(0, array_size - 1)
+                    swap(array[idx1], array[idx2])
+            
+            return array
 
-        // Get total number of processes and rank of each process
-        int num_procs, rank
-        MPI_Comm_size(MPI_COMM_WORLD, &num_procs)
-        MPI_Comm_rank(MPI_COMM_WORLD, &rank)
+        function get_bucket_index(value, splitters):
+            bucket = 0
+            while bucket < splitters.length AND value > splitters[bucket]:
+                bucket += 1
+            return bucket
 
-        // Step 1: Sort local data locally
-        local_data = sort(local_data)
-
-        // Step 2: Choose 'p' samples from the sorted local data
-        samples = select_samples(local_data, num_procs)
-
-        // Step 3: Gather all samples to the root process
-        all_samples = []
-        MPI_Gather(samples, num_procs, MPI_INT, all_samples, num_procs, MPI_INT, root=0, MPI_COMM_WORLD)
-
-        // Step 4: Root process sorts the gathered samples and selects splitters
-        splitters = []
-        if rank == 0:
-            all_samples_sorted = sort(all_samples)
-            splitters = select_splitters(all_samples_sorted, num_procs)
-
-        // Step 5: Broadcast splitters to all processes
-        MPI_Bcast(splitters, num_procs, MPI_INT, root=0, MPI_COMM_WORLD)
-
-        // Step 6: Each process redistributes its local data based on the splitters
-        buckets = distribute_data(local_data, splitters, num_procs)
-
-        // Step 7: Each process sends its buckets to the appropriate processes
-        for i = 0 to num_procs - 1:
-            // Send and receive buckets to/from each process
-            send_bucket_to_process(buckets[i], i)
-            receive_bucket_from_process(i)
-
-        // Step 8: Merge the received buckets
-        local_data = merge(received_buckets)
-
-        // Step 9: Perform local sort on the merged data
-        local_data = sort(local_data)
-
-        // Step 10: Gather sorted data on the root process
-        sorted_data = []
-        MPI_Gather(local_data, len(local_data), MPI_INT, sorted_data, len(local_data), MPI_INT, root=0, MPI_COMM_WORLD)
-
-        // Finalize MPI environment
-        MPI_Finalize()
-
-        return sorted_data
+        // Main Algorithm
+        procedure parallel_sample_sort(array_size, input_type):
+            // Initialize MPI
+            rank = MPI_Get_rank()
+            num_procs = MPI_Get_size()
+            root = 0
+            
+            // Validate input
+            if array_size < num_procs:
+                print "Error: Array size must be >= number of processors"
+                return
+            
+            // Calculate local sizes
+            base_size = array_size / num_procs
+            remainder = array_size % num_procs
+            local_size = base_size + (rank < remainder ? 1 : 0)
+            
+            // Initialize and distribute data
+            if rank == root:
+                input_array = initialize_array(array_size, input_type)
+                
+            local_array = new array[local_size]
+            MPI_Scatter(input_array, local_size, local_array)
+            
+            // Local sort
+            sort(local_array)
+            
+            // Sample selection
+            samples_per_proc = 3
+            local_samples = new array[num_procs - 1]
+            if local_size > 0:
+                stride = local_size / num_procs
+                for i = 0 to num_procs - 2:
+                    idx = min(floor(stride * (i + 1)), local_size - 1)
+                    local_samples[i] = local_array[idx]
+            else:
+                fill(local_samples, MAX_INT)
+            
+            // Gather samples and select splitters
+            if rank == root:
+                global_samples = new array[num_procs * (num_procs - 1)]
+                
+            MPI_Gather(local_samples, num_procs - 1, global_samples)
+            
+            if rank == root:
+                sort(global_samples)
+                // Select evenly spaced splitters
+                for i = 0 to num_procs - 2:
+                    idx = ((i + 1) * global_samples.length) / num_procs
+                    local_samples[i] = global_samples[idx]
+                    
+            // Broadcast splitters to all processes
+            MPI_Broadcast(local_samples)
+            
+            // Distribute elements to buckets
+            temp_buckets = array of num_procs empty arrays
+            for each element in local_array:
+                bucket = get_bucket_index(element, local_samples)
+                temp_buckets[bucket].append(element)
+            
+            // Prepare for all-to-all communication
+            max_bucket_size = local_size + 1
+            buckets = new array[max_bucket_size * num_procs]
+            
+            for i = 0 to num_procs - 1:
+                buckets[i * max_bucket_size] = temp_buckets[i].length
+                copy(temp_buckets[i], buckets[i * max_bucket_size + 1])
+            
+            // All-to-all exchange
+            bucket_buffer = new array[max_bucket_size * num_procs]
+            MPI_Alltoall(buckets, max_bucket_size, bucket_buffer)
+            
+            // Process received data
+            merged_data = empty array
+            for i = 0 to num_procs - 1:
+                count = bucket_buffer[i * max_bucket_size]
+                start = i * max_bucket_size + 1
+                end = start + count
+                merged_data.append(bucket_buffer[start:end])
+            
+            // Sort merged data
+            sort(merged_data)
+            
+            // Final gather
+            if rank == root:
+                final_array = new array[array_size]
+                
+            MPI_Gather(merged_data, merged_data.length, final_array)
+            
+            // Verify sort (only root)
+            if rank == root:
+                is_sorted = true
+                for i = 1 to array_size - 1:
+                    if final_array[i - 1] > final_array[i]:
+                        is_sorted = false
+                        break
+                        
+                print is_sorted ? "Array sorted correctly" : "Sort failed"
+            
+            MPI_Finalize()
     end func
     ```
 - Merge Sort Pseudocode
@@ -446,13 +531,13 @@ We will collect them using Caliper and compare them using Thicket.
   <img width="755" alt="Screenshot 2024-10-23 at 12 16 30 AM" src="https://github.com/user-attachments/assets/6b935be9-6627-4d6e-b87e-0fab49d38ab1">
   
 - Merge Sort Calltree  
-    ![Merge Sort Calltree](./merge_sort/calltree.png)  
+    ![Merge Sort Calltree](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/calltree.png?raw=true)  
 
 - Radix Sort Calltree  
   <img width="708" alt="Screenshot 2024-10-22 at 5 59 43 PM" src="https://github.com/user-attachments/assets/91253424-0569-49a0-b2be-0d585fac01b1">
 - Column Sort Calltree  
     `data_init_X` is `data_init_runtime`  
-    ![Column Sort Calltree](./column_sort/column_sort_calltree.png)
+    ![Column Sort Calltree](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/column_sort_calltree.png?raw=true)
 
 ### 3b. Metadata
 - Bitonic Sort Metadata  
@@ -463,12 +548,12 @@ We will collect them using Caliper and compare them using Thicket.
 
 
 - Merge Sort Metadata
-    ![Merge Sort Metadata](./merge_sort/metadata.png)
+    ![Merge Sort Metadata](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/metadata.png?raw=true)
 
 - Radix Sort Metadata  
   <img width="912" alt="Screenshot 2024-10-22 at 11 25 50 PM" src="https://github.com/user-attachments/assets/86e0e3b3-5839-44b1-9945-33d454271993">
 - Column Sort Metadata  
-    ![Column Sort Metadata](./column_sort/column_sort_metadata.png)
+    <img alt="Column Sort Metadata" src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/column_sort_metadata.png?raw=true">
 
 ## 4. Performance Evaluation
 
@@ -476,10 +561,13 @@ We will collect them using Caliper and compare them using Thicket.
   <img width="1358" alt="image" src="https://github.com/user-attachments/assets/bf0dec61-25b5-4a4a-8938-961166a13d00">
   The graph indicates that the speedup maxes out around 512 processes, with the speedup become significantly higher at around 128 processes. We can see from this that using 512 processes would be the most efficient for sorting a randomized array size of 2^16.
 - Sample Sort:
-  
-  <img width="830" alt="Screenshot 2024-10-23 at 12 45 00 AM" src="https://github.com/user-attachments/assets/2352c0df-807d-43af-8878-853bed1174fe">
+  ![Screenshot 2024-11-04 at 10 52 20 AM](https://github.com/user-attachments/assets/79f364f6-5c16-4d16-9376-f8e8040046e0)
 
-  - Strong scaling speedup for different input types with problem size 2^22. Sample Sort shows good scaling up to 256 processes with sorted arrays achieving the best speedup. Performance degrades beyond 256 processes due to communication overhead.
+  - Strong scaling speedup for different input types with problem size 2^26. Sample Sort shows good scaling up to 64 processes with sorted arrays achieving the best speedup. Performance degrades beyond 64 processes due to communication overhead.
+
+- Merge Sort  
+    ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/figs/2^26/ReverseSorted/main_speedup.png?raw=true)  
+    Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
 
 - Radix Sort:
   - Limitations with the algorithm: Innefficiencies with the current implementation resulted in limited data for higher number of processors. Because of the nature of radix sort using counting sort under the hood, there is a lot of potential for uneven load balances between processors. (There can be more of one digits and a skewed distribution of buckets)  
@@ -488,12 +576,112 @@ We will collect them using Caliper and compare them using Thicket.
   ![Large Comm time](https://github.com/user-attachments/assets/7dd51ee5-6c2c-4ed5-9ca7-b499eae5d19a)  
   *Labeled incorrecly as small* 
 - Column Sort  
-    ![Strong Scaling Graph](./column_sort/plots/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg)  
+    ![Strong Scaling Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg?raw=true)  
     The graph indicates that the algorithm is strongly scaled, with a bound of about 2 seconds due to the sequential runtime.  
-    ![Speedup Graph](./column_sort/plots/Speedup%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg)  
+    ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots/Speedup%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg?raw=true)  
     The graph indicates that the speedup maxes out at 512 processes, with about a 40x speedup compared to 2 processes. Because 512 is the maximum number of processes that can be used to sort 2^28 elements due to the restrictions, this means that using 512 processes would be the most efficient.  
     More analysis and plots in the column_sort folder.
-- Merge Sort  
-    ![Speedup Graph](./merge_sort/figs/2^26/ReverseSorted/main_speedup.png)  
-    Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
 
+## 5. Presentation
+
+- Bitonic Sort<br/>
+
+- Sample Sort<br/>
+
+- Merge Sort<br/>
+
+- Radix Sort<br/>
+
+- Column Sort<br/>
+    - <strong>comm Strong Scaling Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^28"><br/>
+        For the smaller input sizes (2^16, 2^18, 2^20), there is an upwards trend for the comm time, indicating that the communication overhead is overtaking the benefit that more parallelization would give. Across all input types, the larger input sizes, and number of processes, the comm time is about the same, with a few outliers in the graphs, which can be explained with hardware variance. Addiionally, the randomness of the graphs can also be explained with hardware variance as the times are quite small. Some runs may have had nodes that are closer to each other or had nodes that ran a bit faster or slower than the others. The reason for the constant time is due to the implementation. There is a while loop that sends data whose number of iterations is on the scale of the number of processes. The less processes there are, the more data is sent per iteration, but less iterations are needed. So, the constant line seen in the graph indicates that the ratio between the data sending time and the number of iterations is constant. This also means that communication does not scale strongly with the number of proceses whatsoever. However, the algorithm does not spend a lot of time communicating for every input size, as indicated by the extremeley small times on the graphs.
+        <br/>
+    - <strong>comm Speedup Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^28"><br/>
+        As seen in the Strong Scaling graphs, the smaller input sizes (2^16, 2^18, 2^20) have a decreasing Speedup as the number of processes increases. This is due to the communication overhead overtaking the benefit of using more processes, so to minimize communication time, it would be best to use 2 processes for those input types. For the rest of the graphs, the graphs appear random. This is due to the Strong Scaling graph being essentially constant, so any deviation from the average will cause a speedup or slowdown to be calculated.
+        <br/>
+    - <strong>comm Weak Scaling Graph</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Weak%20Scaling%20of%20comm%20for%20sorting%20elements.jpg?raw=true" width=33% alt="Weak Scaling Graph comm 2^16"><br/>
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph actually does follow this slope for a bit, until 512 processes, where all but Sorted input types, experience a large increase in work per process. Once again, this can be explain with hardware variability as these times are quite small. The nodes may have been further away or ran slower than the other nodes, leading to a slowdown.
+        <br/>
+
+    - <strong>comp_large Strong Scaling Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comp_large%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comp_large 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comp_large%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comp_large 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comp_large%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comp_large 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comp_large%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comp_large 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comp_large%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comp_large 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comp_large%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comp_large 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comp_large%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comp_large 2^28"><br/>
+        All the graphs show an inversely proprotional relationship between the comp_large time and the number of processes for every input type. Interestingly, the sorted input type is faster for every input size. This is due to the algorithm using std::sort, which uses an implementation of quicksort. Since the input is already sorted, the quicksort algorithmn does not need to make as many, if any, swaps, so it runs quicker. Additionally, for the graphs that have this data point, the graphs level off at about 128 processes, indicating that there is not much more that can be parallelized and sequential runtime is now the limiting factor. These graphs also indicate that the comp_large scales strongly with the number of processes.
+        <br/>
+    - <strong>comp_large Speedup Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^28"><br/>
+        Since the Strong Scaling graphs have an inversely proportional relationship between the comp_large time and the number of processes, we would expect a proportional relationship between the comp_large Speedup and the number of processes, which is shown for every graph. Due to the extremely strong strong scaling of comp_large, using the maximum number of processes will lead to the largest speedup, which is ideal.
+        <br/>
+    - <strong>comp_large Weak Scaling Graph</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Weak%20Scaling%20of%20comp_large%20for%20sorting%20elements.jpg?raw=true" width=33% alt="Weak Scaling Graph comp_large 2^16"><br/>
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph does follow this relationship quite closely for all the input types, meaning that comp_large is also weakly scaled as the number of processes increases. Additionally, the Sorted input type is also the fastest among the input types, once again due to the underlying quicksort of std::sort not needing to make as many, if any, swaps.
+        <br/>
+
+    - <strong>main Strong Scaling Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^28"><br/>
+        For smaller input sizes (2^16, 2^18, 2^20), the graphs actually show an increase in main time as the number of processes increases. This is due to the communication overhead overtaking the benefits of using more processes, as indicated by the strong scaling graphs of comm. As the input size increases, however, the graphs start to show the expected inversely proportional relationship between the time and the number of processes. Once again, the Sorted input type is the fastest for those graphs, which was indicated in the comp_large strong scaling graphs. The scaling also begins to level off at 128 processes, which was also indicated by the comp_large strong scaling graphs. This means that for the larger input sizes, the comp_large time overtakes the comm time, so the main graphs will be closer to the comp_large graphs. The graphs for the larger input sizes also indicate that main scales strongly with the number of processes.
+        <br/>
+    - <strong>main Speedup Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^28"><br/>
+        For smaller input sizes (2^16, 2^18, 2^20), the Speedup of main goes down, which is expected since the Strong Scaling graphs indicate an increase in time as the number of processes increases. As the input size increases, the graphs show the expected proportional relationship between the Speedup and the number of processes. An interesting thing to note is that as the input size increases, the number of processes with the best speedup also increases. This can be explained by the comp_large time overtaking the comm time as the number of processes increases. Additionally, for larger input types, the Speedup begins to level off at 128 processes, in contrast to the comp_large Speedup never leveling off. This shows that the more random comm Speedup is affecting the Speedup of main, and the outliers in the comm Strong Scaling graph have a noticable effect on the runtime of main.
+        <br/>
+    - <strong>main Weak Scaling Graph</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Weak%20Scaling%20of%20main%20for%20sorting%20elements.jpg?raw=true" width=33% alt="Weak Scaling Graph main 2^16"><br/>
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph follows this relationship until 32 processes, where it sharply increases. This shows that the algorithm does not follow the ideal weak scaling, so the amount of work per processes is not even as both the amount of processes increase and the input size increases.
+        <br/>
+
+    - <strong>Cache Misses Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_cm/Min%20L1%20misses%20rank.jpg?raw=true" width="33%" alt="L1 Misses Graph">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_cm/Min%20L2%20misses%20rank.jpg?raw=true" width="33%" alt="L2 Misses Graph"><br/>
+        The graphs show that as the input size doubles, the number of cache misses per process double. This is expected because the amount of data per process also doubles, meaning there is twice the opportunities for cache misses. They also show that doubling the number of processes will decrease the number of cache misses, which is also expected because by doubling the number of processes, the amount of data per process is halved, so there are less opportunities for cache misses to occur. Additionally, the graphs also show that the number of L1 cache misses is greater than the number of L2 caches misses, which is expected because of L1 cache is accessed first before the L2 cache, so a cache miss on L2 translates to a cache miss on L1 as well, but the L2 cache may already have the data that the L1 cache missed on.
+        <br/>
+    - <strong>Additional Notes</strong><br/>
+        The Speedup is calculated using t_1 as the time it takes for 2 processes multipled by 2, which is why all the speedup graphs start at a 2x speedup.<br/>
+
+        For all the Weak Scaling graphs, the ratio used is 4:2, so as the input size quadruples, the number of processes doubles. Thus, a graph with a slope of 2 is expected, where 2 indicates that the amount of work per process should double.<br/>
+
+        Column Sort has two restrictions:
+        - `numRows >= (numCols - 1)^2 * 2`
+        - `numRows % numCols == 0`
+        <br/>
+        Thus, the number of process that can be used is bounded by the maximum number of columns in the matrix, which is why data points are missing from some of the graphs and 1024 processes is not ran at all. 1024 processes would require an input size of 2^31 (1024 x 2097152).<br/>
+
+        Additionally, column sort runs quicker on sorted input compared to the other input types, and any other input type would take about the same time. This is due to the use of quicksort to sort the columns of the matrix in steps 1, 3, 5, and 7. Since the Sorted input type is already sorted, the quicksort algorithm will do less swaps, if any, on the data, leading to a quicker runtime.<br/>
