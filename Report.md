@@ -593,6 +593,8 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^28"><br/>
+        description
+        <br/>
 
 - Sample Sort<br/>
 
