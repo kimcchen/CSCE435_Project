@@ -601,8 +601,8 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm20.png" width=33% alt="Speedup Graph comm 2^20">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm22.png" width=33% alt="Speedup Graph comm 2^22">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm24.png" width=33% alt="Speedup Graph comm 2^24">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscaling26.png" width=33% alt="Speedup Graph comm 2^26">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscaling28.png" width=33% alt="Speedup Graph comm 2^28"><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm26.png" width=33% alt="Speedup Graph comm 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm28.png" width=33% alt="Speedup Graph comm 2^28"><br/>
         As seen in the Strong Scaling graphs, the smaller input sizes (2^16, 2^18, 2^20) have a decreasing Speedup as the number of processes increases. This is due to the communication overhead overtaking the benefit of using more processes, so to minimize communication time, it would be best to use 2 processes for those input types. For the rest of the graphs, the graphs appear random. This is due to the Strong Scaling graph being essentially constant, so any deviation from the average will cause a speedup or slowdown to be calculated.
         <br/>
 
