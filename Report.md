@@ -494,7 +494,7 @@ We will collect them using Caliper and compare them using Thicket.
     The graph indicates that the speedup maxes out at 512 processes, with about a 40x speedup compared to 2 processes. Because 512 is the maximum number of processes that can be used to sort 2^28 elements due to the restrictions, this means that using 512 processes would be the most efficient.  
     More analysis and plots in the column_sort folder.
 - Merge Sort  
-    ![Speedup Graph](./merge_sort/figs/2^26/ReverseSorted/main_speedup.png)  
+    ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/figs/2^26/ReverseSorted/main_speedup.png)  
     Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
 
 ## 5. Presentation
@@ -517,7 +517,7 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^28"><br/>
         INSERT COMM SPEEDUP ANALYSIS HERE<br/>
-    <br/>
+        <br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^16">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^18">
@@ -527,8 +527,8 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^28"><br/>
         INSERT COMM STRONG SCALING ANALYSIS HERE<br/>
-    <br/>
+        <br/>
     - <strong>comm Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Weak%20Scaling%20of%20comm%20for%20sorting%20elements.jpg?raw=true" width=33% alt="Weak Scaling Graph comm 2^16"><br/>
         INSERT COMM WEAK SCALING ANALYSIS HERE<br/>
-    <br/>
+        <br/>
