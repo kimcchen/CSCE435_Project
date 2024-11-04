@@ -585,6 +585,26 @@ We will collect them using Caliper and compare them using Thicket.
 ## 5. Presentation
 
 - Bitonic Sort<br/>
+  - <strong>comm Strong Scaling Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^28"><br/>
+        description
+        <br/>
+        - <strong>comm Speedup Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^28"><br/>
+        As seen in the Strong Scaling graphs, the smaller input sizes (2^16, 2^18, 2^20) have a decreasing Speedup as the number of processes increases. This is due to the communication overhead overtaking the benefit of using more processes, so to minimize communication time, it would be best to use 2 processes for those input types. For the rest of the graphs, the graphs appear random. This is due to the Strong Scaling graph being essentially constant, so any deviation from the average will cause a speedup or slowdown to be calculated.
+        <br/>
 
 - Sample Sort<br/>
 
@@ -598,6 +618,56 @@ We will collect them using Caliper and compare them using Thicket.
         The behavior for the cache miss plots is as expected. We can see two separate sets of parallel lines on both plots that indicate that as the input size increase the number of cache misses also increase. Furthermore, we can also see that as the number of processes increase, the number of cache misses also increases. Both these observations align with expectations as with more data and more threads accessing that data, the number of cache misses will increase. Finally, we also see, based on the scale of the plots, that the number of L2 cache misses is greater than the number of L1 cache misses, which makes sense as the L1 cache is accessed before the L2 cache and has less memory.
 
 - Radix Sort<br/>
+- Radix Sort<br/>
+ - <strong>comm Strong Scaling Graphs</strong><br/>
+     ADD GRAPHS
+      <br/>
+     GRAPH ANALYSIS
+     <br/>
+    - <strong>comm Speedup Graphs</strong><br/>
+      ADD GRAPHS
+       <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+    - <strong>comm Weak Scaling Graph</strong><br/>
+        ADD GRAPH <br/>
+        ADD GRAPH ANALYSIS
+        <br/>
+
+    - <strong>comp_large Strong Scaling Graphs</strong><br/>
+    ADD GRAPHS
+      <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+    - <strong>comp_large Speedup Graphs</strong><br/>
+      ADD GRAPHS
+  <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+    - <strong>comp_large Weak Scaling Graph</strong><br/>
+      ADD GRAPH <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+
+    - <strong>main Strong Scaling Graphs</strong><br/>
+       ADD GRAPHS
+  <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+    - <strong>main Speedup Graphs</strong><br/>
+       ADD GRAPHS <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+      <strong>main Weak Scaling Graph</strong><br/>
+       ADD GRAPH <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+
+      <strong>Cache Misses Graphs</strong><br/>
+      ADD GRAPHS <br/>
+       ADD GRAPH ANALYSIS
+        <br/>
+    - <strong>Additional Notes</strong><br/>
 
 - Column Sort<br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
