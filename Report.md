@@ -561,10 +561,9 @@ We will collect them using Caliper and compare them using Thicket.
   <img width="1358" alt="image" src="https://github.com/user-attachments/assets/bf0dec61-25b5-4a4a-8938-961166a13d00">
   The graph indicates that the speedup maxes out around 512 processes, with the speedup become significantly higher at around 128 processes. We can see from this that using 512 processes would be the most efficient for sorting a randomized array size of 2^16.
 - Sample Sort:
-  
-  <img width="830" alt="Screenshot 2024-10-23 at 12 45 00 AM" src="https://github.com/user-attachments/assets/2352c0df-807d-43af-8878-853bed1174fe">
+  ![Screenshot 2024-11-04 at 10 52 20 AM](https://github.com/user-attachments/assets/79f364f6-5c16-4d16-9376-f8e8040046e0)
 
-  - Strong scaling speedup for different input types with problem size 2^22. Sample Sort shows good scaling up to 256 processes with sorted arrays achieving the best speedup. Performance degrades beyond 256 processes due to communication overhead.
+  - Strong scaling speedup for different input types with problem size 2^26. Sample Sort shows good scaling up to 64 processes with sorted arrays achieving the best speedup. Performance degrades beyond 64 processes due to communication overhead.
 
 - Merge Sort  
     ![Speedup Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/figs/2^26/ReverseSorted/main_speedup.png?raw=true)  
