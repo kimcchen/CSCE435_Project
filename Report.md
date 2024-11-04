@@ -517,7 +517,7 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^28"><br/>
-        INSERT COMM STRONG SCALING ANALYSIS HERE
+        For the smaller input sizes (2^16, 2^18, 2^20), there is an upwards trend for the comm time, indicating that the communication overhead is overtaking the benefit that more parallelization would give. Across all input types, the larger input sizes, and number of processes, the comm time is about the same, with a few outliers in the graphs, which can be explained with hardware variance. Addiionally, the randomness of the graphs can also be explained with hardware variance as the times are quite small. Some runs may have had nodes that are closer to each other or had nodes that ran a bit faster or slower than the others. The reason for the constant time is due to the implementation. There is a while loop that sends data whose number of iterations is on the scale of the number of processes. The less processes there are, the more data is sent per iteration, but less iterations are needed. So, the constant line seen in the graph indicates that the ratio between the data sending time and the number of iterations is constant. This also means that communication does not scale strongly with the number of proceses whatsoever. However, the algorithm does not spend a lot of time communicating for every input size, as indicated by the extremeley small times on the graphs.
         <br/>
     - <strong>comm Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^16">
@@ -527,11 +527,11 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph comm 2^28"><br/>
-        INSERT COMM SPEEDUP ANALYSIS HERE
+        As seen in the Strong Scaling graphs, the smaller input sizes (2^16, 2^18, 2^20) have a decreasing Speedup as the number of processes increases. This is due to the communication overhead overtaking the benefit of using more processes, so to minimize communication time, it would be best to use 2 processes for those input types. For the rest of the graphs, the graphs appear random. This is due to the Strong Scaling graph being essentially constant, so any deviation from the average will cause a speedup or slowdown to be calculated.
         <br/>
     - <strong>comm Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Weak%20Scaling%20of%20comm%20for%20sorting%20elements.jpg?raw=true" width=33% alt="Weak Scaling Graph comm 2^16"><br/>
-        INSERT COMM WEAK SCALING ANALYSIS HERE
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph actually does follow this slope for a bit, until 512 processes, where all but Sorted input types, experience a large increase in work per process. Once again, this can be explain with hardware variability as these times are quite small. The nodes may have been further away or ran slower than the other nodes, leading to a slowdown.
         <br/>
 
     - <strong>comp_large Strong Scaling Graphs</strong><br/>
@@ -542,7 +542,7 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comp_large%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comp_large 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comp_large%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comp_large 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comp_large%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comp_large 2^28"><br/>
-        INSERT comp_large STRONG SCALING ANALYSIS HERE
+        All the graphs show an inversely proprotional relationship between the comp_large time and the number of processes for every input type. Interestingly, the sorted input type is faster for every input size. This is due to the algorithm using std::sort, which uses an implementation of quicksort. Since the input is already sorted, the quicksort algorithmn does not need to make as many, if any, swaps, so it runs quicker. Additionally, for the graphs that have this data point, the graphs level off at about 128 processes, indicating that there is not much more that can be parallelized and sequential runtime is now the limiting factor. These graphs also indicate that the comp_large scales strongly with the number of processes.
         <br/>
     - <strong>comp_large Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^16">
@@ -552,11 +552,11 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20comp_large%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph comp_large 2^28"><br/>
-        INSERT comp_large SPEEDUP ANALYSIS HERE
+        Since the Strong Scaling graphs have an inversely proportional relationship between the comp_large time and the number of processes, we would expect a proportional relationship between the comp_large Speedup and the number of processes, which is shown for every graph. Due to the extremely strong strong scaling of comp_large, using the maximum number of processes will lead to the largest speedup, which is ideal.
         <br/>
     - <strong>comp_large Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Weak%20Scaling%20of%20comp_large%20for%20sorting%20elements.jpg?raw=true" width=33% alt="Weak Scaling Graph comp_large 2^16"><br/>
-        INSERT comp_large WEAK SCALING ANALYSIS HERE
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph does follow this relationship quite closely for all the input types, meaning that comp_large is also weakly scaled as the number of processes increases. Additionally, the Sorted input type is also the fastest among the input types, once again due to the underlying quicksort of std::sort not needing to make as many, if any, swaps.
         <br/>
 
     - <strong>main Strong Scaling Graphs</strong><br/>
@@ -567,7 +567,7 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph main 2^28"><br/>
-        INSERT main STRONG SCALING ANALYSIS HERE
+        For smaller input sizes (2^16, 2^18, 2^20), the graphs actually show an increase in main time as the number of processes increases. This is due to the communication overhead overtaking the benefits of using more processes, as indicated by the strong scaling graphs of comm. As the input size increases, however, the graphs start to show the expected inversely proportional relationship between the time and the number of processes. Once again, the Sorted input type is the fastest for those graphs, which was indicated in the comp_large strong scaling graphs. The scaling also begins to level off at 128 processes, which was also indicated by the comp_large strong scaling graphs. This means that for the larger input sizes, the comp_large time overtakes the comm time, so the main graphs will be closer to the comp_large graphs. The graphs for the larger input sizes also indicate that main scales strongly with the number of processes.
         <br/>
     - <strong>main Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^16">
@@ -577,15 +577,27 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup%20of%20main%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Speedup Graph main 2^28"><br/>
-        INSERT main SPEEDUP ANALYSIS HERE
+        For smaller input sizes (2^16, 2^18, 2^20), the Speedup of main goes down, which is expected since the Strong Scaling graphs indicate an increase in time as the number of processes increases. As the input size increases, the graphs show the expected proportional relationship between the Speedup and the number of processes. An interesting thing to note is that as the input size increases, the number of processes with the best speedup also increases. This can be explained by the comp_large time overtaking the comm time as the number of processes increases. Additionally, for larger input types, the Speedup begins to level off at 128 processes, in contrast to the comp_large Speedup never leveling off. This shows that the more random comm Speedup is affecting the Speedup of main, and the outliers in the comm Strong Scaling graph have a noticable effect on the runtime of main.
         <br/>
     - <strong>main Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Weak%20Scaling%20of%20main%20for%20sorting%20elements.jpg?raw=true" width=33% alt="Weak Scaling Graph main 2^16"><br/>
-        INSERT main WEAK SCALING ANALYSIS HERE
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph follows this relationship until 32 processes, where it sharply increases. This shows that the algorithm does not follow the ideal weak scaling, so the amount of work per processes is not even as both the amount of processes increase and the input size increases.
         <br/>
 
     - <strong>Cache Misses Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_cm/Min%20L1%20misses%20rank.jpg?raw=true" width="33%" alt="L1 Misses Graph">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_cm/Min%20L2%20misses%20rank.jpg?raw=true" width="33%" alt="L2 Misses Graph"><br/>
-        INSERT CACHE MISSES ANALYSIS HERE
+        The graphs show that as the input size doubles, the number of cache misses per process double. This is expected because the amount of data per process also doubles, meaning there is twice the opportunities for cache misses. They also show that doubling the number of processes will decrease the number of cache misses, which is also expected because by doubling the number of processes, the amount of data per process is halved, so there are less opportunities for cache misses to occur. Additionally, the graphs also show that the number of L1 cache misses is greater than the number of L2 caches misses, which is expected because of L1 cache is accessed first before the L2 cache, so a cache miss on L2 translates to a cache miss on L1 as well, but the L2 cache may already have the data that the L1 cache missed on.
         <br/>
+    - <strong>Additional Notes</strong><br/>
+        The Speedup is calculated using t_1 as the time it takes for 2 processes multipled by 2, which is why all the speedup graphs start at a 2x speedup.<br/>
+
+        For all the Weak Scaling graphs, the ratio used is 4:2, so as the input size quadruples, the number of processes doubles. Thus, a graph with a slope of 2 is expected, where 2 indicates that the amount of work per process should double.<br/>
+
+        Column Sort has two restrictions:
+        - `numRows >= (numCols - 1)^2 * 2`
+        - `numRows % numCols == 0`
+        <br/>
+        Thus, the number of process that can be used is bounded by the maximum number of columns in the matrix, which is why data points are missing from some of the graphs and 1024 processes is not ran at all. 1024 processes would require an input size of 2^31 (1024 x 2097152).<br/>
+
+        Additionally, column sort runs quicker on sorted input compared to the other input types, and any other input type would take about the same time. This is due to the use of quicksort to sort the columns of the matrix in steps 1, 3, 5, and 7. Since the Sorted input type is already sorted, the quicksort algorithm will do less swaps, if any, on the data, leading to a quicker runtime.<br/>
