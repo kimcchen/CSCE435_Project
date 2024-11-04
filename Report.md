@@ -497,3 +497,17 @@ We will collect them using Caliper and compare them using Thicket.
     ![Speedup Graph](./merge_sort/figs/2^26/ReverseSorted/main_speedup.png)  
     Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
 
+## 5. Presentation
+
+- Bitonic Sort
+
+- Sample Sort
+
+- Merge Sort
+
+- Radix Sort
+
+- Column Sort  
+    <!-- ![Speedup Graph 2^16](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Speedup of comm for sorting 2^16 elements.jpg?raw=true) ![Speedup Graph 2^18](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/column_sort_calltree.png?raw=true)
+    |
+    | -->
