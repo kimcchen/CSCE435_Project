@@ -585,6 +585,14 @@ We will collect them using Caliper and compare them using Thicket.
 ## 5. Presentation
 
 - Bitonic Sort<br/>
+  - <strong>comm Strong Scaling Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^16%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^18%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^20%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^22%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^24%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^26%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots_scaling/Strong%20Scaling%20of%20comm%20for%20sorting%202^28%20elements.jpg?raw=true" width=33% alt="Strong Scaling Graph comm 2^28"><br/>
 
 - Sample Sort<br/>
 
