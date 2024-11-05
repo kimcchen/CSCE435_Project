@@ -616,7 +616,7 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^22/comm.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^22">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^24/comm.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^26/comm.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^26"><br/>
-        jj
+        For smaller input sizes, we see that the communication times are very variable. This can be attributed to the fact that when there is a smaller volume of data, communication is relatively constant, as seen by the scale of the y-axis. However, as we increase the input array size, we see that as the number of processes increase, the communication time actually decreases. This is a result of my implementation of merge sort. In the communication step of merge sort, different processes are merging together different parts of the array. This merge computation dominates the total communication time and because the merge computation decreases as the number of processes increase, the average communication time per rank decreases as the number of processes increases. Furthermore, in general, the type of input array (random, sorted, etc.) does not have any effect on communication time.
         <br/>
     - <strong>comm Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^16/comm_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^16">
@@ -625,11 +625,11 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^22/comm_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^22">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^24/comm_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^26/comm_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^26"><br/>
-        desc
+        Similar to the comm strong scaling plots above, the smaller input sizes have decreasing speedup as we increase the array size. This is a result of communication overhead when the array size is small, reducing the benefit of parallelization. As you increase the array size, the communication speedup tends to increase as the number of processes increase. This is due to the same reasons explained in the strong scaling section. 
         <br/>
     - <strong>comm Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/weak_scaling/comm.png?raw=true" width=33% alt="Weak Scaling Graph comm 2^16"><br/>
-        desc
+        The ratio used to generate the weak scaling graph is 4:2, meaning that as input size quadruples, the number of processes doubles. Therefore, in theory, we would obtain a line with a slope of 2. The graphs do tend to follow this general trend, with a small deviation at 64 processes. This deviation can be explained by the fact that at 64 processes, Grace requires 2 nodes which would increase communication times non-proportionally. 
         <br/>
 
     - <strong>comp_large Strong Scaling Graphs</strong><br/>
@@ -639,7 +639,7 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^22/comp_large.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^22">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^24/comp_large.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^26/comp_large.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^26"><br/>
-        jj
+        For the computation time, the trend is the same for all input types and array sizes. As we increase the number of processes, the total computation time decreases up until a certain point due to diminishing returns. For all combinations of inputs, the optimal number of processes appears to be 128 processes when the curve flattens out. The reason why the input type of the array does not change the sorting time is because of my implementation of merge sort. Because I used a naive implementation that does not check to see if pieces of the input are already sorted, the time it takes to sort is the same regardless of how sorted the array is.
         <br/>
     - <strong>comp_large Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^16/comp_large_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^16">
@@ -648,11 +648,11 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^22/comp_large_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^22">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^24/comp_large_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^26/comp_large_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^26"><br/>
-        desc
+        The comp_large speedup graphs match what we see in the strong scaling graphs above. As the number of processes increase, we get a larger speedup, demonstrating the benefits of parallelization. This trend is the same across all array sizes and input types. 
         <br/>
     - <strong>comp_large Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/weak_scaling/comp_large.png?raw=true" width=33% alt="Weak Scaling Graph comm 2^16"><br/>
-        desc
+        The ratio used to generate the weak scaling graph is 4:2, meaning that as input size quadruples, the number of processes doubles. Therefore, in theory, we would obtain a line with a slope of 2. We can see that the lines in general do follow this trend with slight deviations at 64 processes again.
         <br/>
 
     - <strong>main Strong Scaling Graphs</strong><br/>
@@ -662,7 +662,7 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^22/main.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^22">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^24/main.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^26/main.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^26"><br/>
-        jj
+        We observe that for smaller input types, the time it takes to perform the entire sort actually increases as the number of processes increase. This is due to the fact that at smaller array sizes, the communication times dominate the benefits gained from parallelization, causing the runtime to increase rather than improve. However, as we increase the array size, we see that the time it takes to perform the entire algorithm does in fact decrease as the number of processes increase. I did have a few bad runs on Grace for an array size of 2^26 which corresponds to the outliers seen on that plot. Excluding those, we can see that the optimal number of processes appears to be around 128 as that is when the curve flattens out, indicating that adding any extra processors beyong this point provides no additional benefit. Furthermore, all array types have similar trends and runtimes due to my implementation of merge sort not factoring in the "sortedness" of the initial array.
         <br/>
     - <strong>main Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^16/main_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^16">
@@ -671,11 +671,11 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^22/main_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^22">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^24/main_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^26/main_speedup.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^26"><br/>
-        desc
+        The speedup plots match what we expect to see based on the strong scaling graphs. For smaller array sizes, the speedup actually decerases as the number of processes increase. However, for large array sizes, the speedup increases as the number of processes increase up until a certain point. As we increase the array size, the max speedup also increases at a higher number of processes. This makes sense as larger amounts of data have more potential for parallelization and require more threads to achieve this max potential. Ignoring the outliers, the different array types also do follow the same trend.
         <br/>
     - <strong>main Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/weak_scaling/main.png?raw=true" width=33% alt="Weak Scaling Graph comm 2^16"><br/>
-        desc
+        The ratio used to generate the weak scaling graph is 4:2, meaning that as input size quadruples, the number of processes doubles. Therefore, in theory, we would obtain a line with a slope of 2. The lines do follow this trend in general, again with slight deviations around 64 processes which can be attributed to communication times spiking when increasing the number of nodes on Grace.
         <br/>
 
     
