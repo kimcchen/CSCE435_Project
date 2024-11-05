@@ -588,7 +588,7 @@ We will collect them using Caliper and compare them using Thicket.
 ## 5. Presentation
 
 - Bitonic Sort<br/>
-  - <strong>comm Strong Scaling Graphs</strong><br/>
+    - <strong>comm Strong Scaling Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscaling16.png" width=33% alt="Strong Scaling Graph comm 2^16">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscaling18.png" width=33% alt="Strong Scaling Graph comm 2^18">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscaling20.png" width=33% alt="Strong Scaling Graph comm 2^20">
