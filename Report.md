@@ -534,7 +534,8 @@ We will collect them using Caliper and compare them using Thicket.
     ![Merge Sort Calltree](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/calltree.png?raw=true)  
 
 - Radix Sort Calltree  
-  <img width="708" alt="Screenshot 2024-10-22 at 5 59 43 PM" src="https://github.com/user-attachments/assets/91253424-0569-49a0-b2be-0d585fac01b1">
+<img width="414" alt="Screenshot 2024-11-04 at 11 22 54 PM" src="https://github.com/user-attachments/assets/d3f1cd9a-a539-48fd-89dc-c4570f3fdd61">
+
 - Column Sort Calltree  
     `data_init_X` is `data_init_runtime`  
     ![Column Sort Calltree](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/column_sort_calltree.png?raw=true)
@@ -570,9 +571,8 @@ We will collect them using Caliper and compare them using Thicket.
     Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
 
 - Radix Sort:
-  - Limitations with the algorithm: Innefficiencies with the current implementation resulted in limited data for higher number of processors. Because of the nature of radix sort using counting sort under the hood, there is a lot of potential for uneven load balances between processors. (There can be more of one digits and a skewed distribution of buckets)  
-  ![Whole Comp Time vs Processors](https://github.com/user-attachments/assets/a41b43d3-023d-4cc2-855f-c89532e7c3fe)  
-  The graph indicates that the current algorithm is strongly scaled to a certain point where we see diminishing returns at 512+ processors. The high runtime can be attributed to the current inefficient communication.  
+<img width="916" alt="Screenshot 2024-11-04 at 11 25 42 PM" src="https://github.com/user-attachments/assets/1ef52577-1426-466d-bf2d-923474fcfe12">
+  The graph indicates that the current algorithm benefits from parallelism but the speedup is maxed out at 2.7x. This is a lower number than expected. When adding up to 1024 processors, we would expect a larger speedup, however due to the current implementation, there still a bottle neck of serilization of gathering all local sorts back to the master process and redistributing multiple times (number of digit times). This leads to a plateau of 2.7x speedup. 
   ![Large Comm time](https://github.com/user-attachments/assets/7dd51ee5-6c2c-4ed5-9ca7-b499eae5d19a)  
   *Labeled incorrecly as small* 
 - Column Sort  
