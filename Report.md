@@ -708,51 +708,94 @@ We will collect them using Caliper and compare them using Thicket.
 - Radix Sort<br/>
 - Radix Sort<br/>
  - <strong>comm Strong Scaling Graphs</strong><br/>
-     ADD GRAPHS
+       <img width="33%" alt="commStrongScale2_28" src="https://github.com/user-attachments/assets/4b9a6872-4f17-41f9-9405-7a4a50161787">
+  <img width="33%" alt="commStrongScale2_26" src="https://github.com/user-attachments/assets/cfb90f65-8435-4af9-8a60-2cdbeba4e126">
+  <img width="33%" alt="commStrongScale2_24" src="https://github.com/user-attachments/assets/705db3ad-7d45-4b57-a556-d455eb1b3815">
+  <img width="33%" alt="commStrongScale2_22" src="https://github.com/user-attachments/assets/295631ea-2360-4cc4-afcb-a064bdc66f4a">
+  <img width="33%" alt="commStrongScale2_20" src="https://github.com/user-attachments/assets/70f0b450-9671-47c3-a7c3-faeb5c44e606">
+  <img width="33%" alt="commStrongScale2_18" src="https://github.com/user-attachments/assets/fb4b9fb5-8ae1-4030-b9da-c167041cee06">
+  <img width="33%" alt="commStrongScale2_16" src="https://github.com/user-attachments/assets/f7a1e24e-04ee-4c10-99b4-f932f46ab9f0">
       <br/>
-     GRAPH ANALYSIS
+     For lower array sizes such as 2^16 and 2^18, we notice a positive trend where as the number of processors increases, the communication time also increases. For array sizes that are higher that 2^18, we notice a plateau at 32 processors followed by a dip in communication time with a minor increase again for the highest number of processors. This dip could be due to the diminishing amount of data that each individual processor manages. Even when the volume of communication increases (more processors), there is less information passed between processors. The randomly sorted array dominates the total communication time, this is likely due to the fact that I had generated random with a normal distribution from (0, INT32_MAX) instead of capping the max value as the array_size. This makes sense as radix sort's runtime is affected mainly by array_size and the number of digits in each number. 
      <br/>
-    - <strong>comm Speedup Graphs</strong><br/>
-      ADD GRAPHS
+- <strong>comm Speedup Graphs</strong><br/>
+      <img width="33%" alt="commSpeedup2_28" src="https://github.com/user-attachments/assets/7fea8def-679e-42df-857d-da55d1f7347e">
+<img width="33%" alt="commSpeedup2_26" src="https://github.com/user-attachments/assets/b026b88a-9024-4a45-939a-5dfdf260b9fb">
+<img width="33%" alt="commSpeedup2_24" src="https://github.com/user-attachments/assets/0380814e-6643-4a39-9dd1-039518d93c55">
+<img width="33%" alt="commSpeedup2_22" src="https://github.com/user-attachments/assets/09640cd7-93d2-4ed9-82d7-e49649a53379">
+<img width="33%" alt="commSpeedup2_20" src="https://github.com/user-attachments/assets/acfa7f0e-8f61-43c0-8746-33e9d407fd72">
+<img width="33%" alt="commSpeedup2_18" src="https://github.com/user-attachments/assets/e37a1c66-d30c-4de3-bdc2-97ab889a94ce">
+<img width="33%" alt="commSpeedup2_16" src="https://github.com/user-attachments/assets/b09f80f0-9cd1-41b6-9fc2-a52ca7de4927">
        <br/>
-       ADD GRAPH ANALYSIS
+        For lower array sizes such as 2^16 and 2^18, we notice a negative trend where as the number of processors increases, the speed up decreases. This makes sense as for smaller array size, the communication overhead from more and more processors dominates because smaller sorting problems won't benefit as much from parallelism. For array sizes that are higher that 2^18, we notice a plateau at 32 processors followed by a surge in speed up at 512 processors. This plateau corresponds to the patterns seen in the strong scaling graphs. This speedup postive rate of change at 32 processors and on corresponds to a small turning point in decreasing communication times in the. This increase could be due to the diminishing amount of data that each individual processor manages. Even when the volume of communication increases (more processors), there is less information passed between individual processors which can lead to quicker communication. 
         <br/>
-    - <strong>comm Weak Scaling Graph</strong><br/>
-        ADD GRAPH <br/>
-        ADD GRAPH ANALYSIS
+- <strong>comm Weak Scaling Graph</strong><br/>
+         <img width="33%" alt="weakScalingComm" src="https://github.com/user-attachments/assets/4910dd4b-1e27-41a8-92cf-ae027b7599df">
+<br/>
+        The ratio used to generate the weak scaling graph is 4:2, meaning that as input size quadruples, the number of processes doubles. Ideally, we would expect a our weak scaling graph to have a positive slope of 2 to match the ratio of how we scale our array sizes to the number of processors. In actually, our weak scaling graph initially follows this pattern but soon deviates from this ideal especially as we reach higher number of processors for larger array sizes. This deviation at 32 and 64 processors could be due to load imbalances between local processor counting sorts. While we see a dip in comminucation time in previous graphs, the increase in array size dominates the benefits of parallization even at higher number of processors. 
         <br/>
 
-    - <strong>comp_large Strong Scaling Graphs</strong><br/>
-    ADD GRAPHS
+    - <strong>Computation Strong Scaling Graphs</strong><br/>
+      <img width="33%" alt="compStrongScale2_28" src="https://github.com/user-attachments/assets/1701f1a0-322e-4a7f-9f0f-742ab22b86f1">
+<img width="33%" alt="compStrongScale2_26" src="https://github.com/user-attachments/assets/1a9667d6-082c-4e66-bdf2-35265132dc04">
+<img width="33%" alt="compStrongScale2_24" src="https://github.com/user-attachments/assets/1206c733-346c-4fd8-a460-fbb2806e4ae1">
+<img width="33%" alt="compStrongScale2_22" src="https://github.com/user-attachments/assets/c36da454-c92e-42ee-a68f-bffbefea8b8f">
+<img width="33%" alt="compStrongScale2_20" src="https://github.com/user-attachments/assets/a4eb2e35-0340-44c0-bea3-c082d455b2ad">
+<img width="33%" alt="compStrongScale2_18" src="https://github.com/user-attachments/assets/9938de2c-8a3d-4d86-8645-bdd02086ac68">
+<img width="33%" alt="compStrongScale2_16" src="https://github.com/user-attachments/assets/ec806213-d2f7-4370-bdc7-e5bc4d174ff9">
       <br/>
-       ADD GRAPH ANALYSIS
+       The computation graphs across all array sizes demonstrates a negative relationship between number of processors and total computation time. This is an expected benefit and behavior from increase parallelism. At this project's scale, breaking down the local sorts into smaller chunks and scattering them amongst more processors is beneficial. One importanat note as before is that the type should not affect the computation time too much. While with random array_types, there is less locality of seeing the same digits (102, 57, 93)  vs (999, 998, 997), a major contributing factor of why random takes longer is the fact that I had generated the array with a normal distribution from (0, INT32_MAX) instead of (0, array_size), leading to much larger amounts of digits on average which is a key factor in radix sorts overall runtime. Another important aspect to point out is the plateau in performance increase at around 64 - 128 processors. While we see the benefits of parallelism for radix sort, there are diminishing returns for higher and higher processor counts. 
         <br/>
-    - <strong>comp_large Speedup Graphs</strong><br/>
-      ADD GRAPHS
+
+    - <strong>Computation Speedup Graphs</strong><br/>
+      <img width="33%" alt="compSpeedup2_28" src="https://github.com/user-attachments/assets/aec6bded-43fd-425d-8764-b09e3c22fc49">
+<img width="33%" alt="compSpeedup2_26" src="https://github.com/user-attachments/assets/167bf322-430c-4632-afec-48549ae1d06b">
+<img width="33%" alt="compSpeedup2_24" src="https://github.com/user-attachments/assets/770a7212-a37f-424c-90f6-0dd1dc5e5533">
+<img width="33%" alt="compSpeedup2_22" src="https://github.com/user-attachments/assets/afc610df-9739-4541-906d-1eae19965bc8">
+<img width="33%" alt="compSpeedup2_20" src="https://github.com/user-attachments/assets/6b6015f1-edc1-43bb-aa18-da6ef94059b9">
+<img width="33%" alt="compSpeedup2_18" src="https://github.com/user-attachments/assets/e1bcece5-67b6-4e94-a4c9-2254ea3c49bd">
+<img width="33%" alt="compSpeedup2_16" src="https://github.com/user-attachments/assets/510577d5-052c-4148-93a1-b4059d6d51eb">
   <br/>
-       ADD GRAPH ANALYSIS
+       The speedup graphs demonstrate how computation time is largly uneffected by the array type and also works to demonstrate how effective radix sort benefits from parallelization. At most, we see a speed up of over 1000x for 1024 processors. As we increase the array sizes, we slowly approach a more ideal speed up where 64 processors trends toward a speedup of 64x and 256 processors trends toward a speed up of 256x. 
         <br/>
-    - <strong>comp_large Weak Scaling Graph</strong><br/>
-      ADD GRAPH <br/>
-       ADD GRAPH ANALYSIS
+    - <strong>Computation Weak Scaling Graph</strong><br/>
+       <img width="33%" alt="weakScalingComp" src="https://github.com/user-attachments/assets/5d27a12d-63a2-4c10-9dc3-210edb5f3437">
+<br/>
+       The ratio used to generate the weak scaling graph is 4:2, meaning that as input size quadruples, the number of processes doubles. Ideally, we would expect a our weak scaling graph to have a positive slope of 2 to match the ratio of how we scale our array sizes to the number of processors. In actually, our weak scaling graph seems to undershoot this expected results. This indicates a better computation performance than expected. When splitting each array into sub arrays, the computation on sorted, reverse, and one percent preturbed could all benefit more from data locality when using buckets in counting sort leading to less cache misses. 
         <br/>
 
     - <strong>main Strong Scaling Graphs</strong><br/>
-       ADD GRAPHS
+       <img width="33%" alt="mainStrongScale2_28" src="https://github.com/user-attachments/assets/f8980601-f4de-4a12-881a-5c2e56fdba66">
+<img width="33%" alt="mainStrongScale2_26" src="https://github.com/user-attachments/assets/b1546b9f-09aa-405a-84a2-d19854dc0350">
+<img width="33%" alt="mainStrongScale2_24" src="https://github.com/user-attachments/assets/3de835ee-91b0-4b1b-b38e-d318f9e80c7b">
+<img width="33%" alt="mainStrongScale2_22" src="https://github.com/user-attachments/assets/c3be9ab7-bc5d-431a-a25a-28eee0459aec">
+<img width="33%" alt="mainStrongScale2_20" src="https://github.com/user-attachments/assets/d8c872a9-d86b-4aaa-8aff-bf6f97b180fb">
+<img width="33%" alt="mainStrongScale2_18" src="https://github.com/user-attachments/assets/21dfcdf0-40fd-468f-b136-7e95291a635e">
+<img width="33%" alt="mainStrongScale2_16" src="https://github.com/user-attachments/assets/994a9480-5652-4ac8-9efa-2ec2f9c68e58">
   <br/>
        ADD GRAPH ANALYSIS
         <br/>
+
     - <strong>main Speedup Graphs</strong><br/>
-       ADD GRAPHS <br/>
+        <img width="33%" alt="mainSpeedup2_28" src="https://github.com/user-attachments/assets/e6b4a5a1-a6d3-467f-aed0-b81fc815f05c">
+<img width="33%" alt="mainSpeedup2_26" src="https://github.com/user-attachments/assets/4cd68c57-06d2-487c-be9f-cedc57706b0b">
+<img width="33%" alt="mainSpeedup2_24" src="https://github.com/user-attachments/assets/2361ddb0-fd36-45a0-bef4-6cebbbad2809">
+<img width="33%" alt="mainSpeedup2_22" src="https://github.com/user-attachments/assets/7ed14522-a1fc-4cea-9043-717135499b2b">
+<img width="33%" alt="mainSpeedup2_20" src="https://github.com/user-attachments/assets/76751945-e84a-4b24-b50b-e793d243e1a8">
+<img width="33%" alt="mainSpeedup2_18" src="https://github.com/user-attachments/assets/15f749d9-2a74-4e3f-96d0-f2ee56a41427">
+<img width="33%" alt="mainSpeedup2_16" src="https://github.com/user-attachments/assets/5ce4aee4-1aa1-495a-823a-2d014cb09e19">
+<br/>
        ADD GRAPH ANALYSIS
         <br/>
       <strong>main Weak Scaling Graph</strong><br/>
-       ADD GRAPH <br/>
+      <img width="33%" alt="weakScalingMain" src="https://github.com/user-attachments/assets/8692d17f-ef2d-4900-b6dd-800ba085adef">
+       <br/>
        ADD GRAPH ANALYSIS
         <br/>
-
       <strong>Cache Misses Graphs</strong><br/>
-      ADD GRAPHS <br/>
+      <img width="33%" alt="l1CacheMisses" src="https://github.com/user-attachments/assets/590244f5-ea90-4366-89ef-60f0f7e0f136">
+<img width="33%" alt="l2CacheMisses" src="https://github.com/user-attachments/assets/c48f2d84-efe5-40ee-b7c2-857472ba33b8">
+       <br/>
        ADD GRAPH ANALYSIS
         <br/>
     - <strong>Additional Notes</strong><br/>
