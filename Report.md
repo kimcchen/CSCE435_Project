@@ -892,8 +892,8 @@ Radix Sort<br/>
   <br/>
        In the main strong scaling graphs we see two trends for large and small array sizes. In general, for smaller array sizes (2^16 - 22), the whole computation time initially benefits a little from parallelization however as the number of processors increases the whole program begins to increase in total time. It is likely that for these smaller array sizes, there are faster diminishing returns as each processor is responsible for managing less and less data. There is also a clear overtake of communication overhead as a dominating factor of whole program runtime at processors over 256 for these smaller array sizes. On the flip side, larger array sizes have complex enough sorts to continously see perfomance improvement through all array sizes. For larger arrays, the communication overhead is trumped by the benefits from parallelization. 
         <br/>
-
-    - <strong>main Speedup Graphs</strong><br/>
+- <strong> Main Speedup Graphs</strong>
+<br/>
         <img width="33%" alt="mainSpeedup2_28" src="https://github.com/user-attachments/assets/e6b4a5a1-a6d3-467f-aed0-b81fc815f05c">
 <img width="33%" alt="mainSpeedup2_26" src="https://github.com/user-attachments/assets/4cd68c57-06d2-487c-be9f-cedc57706b0b">
 <img width="33%" alt="mainSpeedup2_24" src="https://github.com/user-attachments/assets/2361ddb0-fd36-45a0-bef4-6cebbbad2809">
@@ -904,7 +904,9 @@ Radix Sort<br/>
 <br/>
        In the speedup graphs we see that the as the array sizes increase, the speed up graph slowly trends to resemble a y = x^(1/2) square root graph. For smaller array sizes we see small inital speed ups with a dip into speedups less than 2x and 1x for larger array sizes. For larger array sizes, we see a speed up plateau of 2.7x at 64 - 128 processors. Once again we can better benefit from parallelism in larger arrays with more complex problems within the scope of (2, 1024) processors. The whole computation time doesn't differ much based on array type excluding random (which has been mentioned and explained before, see additional details as to reasons for deviation). 
         <br/>
-      <strong>main Weak Scaling Graph</strong><br/>
+         <br/>
+      <strong>main Weak Scaling Graph</strong>
+    <br/>
       <img width="33%" alt="weakScalingMain" src="https://github.com/user-attachments/assets/8692d17f-ef2d-4900-b6dd-800ba085adef">
        <br/>
        The ratio used to generate the weak scaling graph is 4:2, meaning that as input size quadruples, the number of processes doubles. Ideally, we would expect a our weak scaling graph to have a positive slope of 2 to match the ratio of how we scale our array sizes to the number of processors. In actually, our weak scaling graph initially follows this pattern but soon deviates from this ideal especially as we reach higher number of processors for larger array sizes. This deviation at 32 and 64 processors could be due to load imbalances between local processor counting sorts. The increase in array size dominates the benefits of parallization at higher number of processors and array sizes. 
@@ -916,7 +918,8 @@ Radix Sort<br/>
        There are more L1 cache misses compared to L2 which follows our expected behavior as an L2 miss first has to fall through an L1 miss. Furthermore, we see that random array types dominate the amount of cache misses. This can be accounted for by the aforementioned lack of data locality with random numbers when accessing bucket counts, and the fact that I created the random array with (0, INTMAX_32) instead of array_max. We also see that the number of cache misses decreases as we increase processors this is because there is less data that each processor manages. Finally, when we increase the array size by a factor of two we generally see a trend of 2x cache misses. 
         <br/>
     - <strong>Additional Notes</strong><br/>
-  When adding up to 1024 processors, we would expect a larger speedup, however due to the current implementation, there still a bottle neck of serilization of gathering all local sorts back to the master process and redistributing multiple times (number of digit times). This leads to a plateau of 2.7x speedup. In addition, the randomly sorted array dominates in run time for a lot of the graphs, this could be attributed to the fact that I initialized the array with a normal distribution from (0, INT32_MAX) whereas every other array type goes from (0, array_size). This will cause a higher runtime for radix sort as it depends on the number of digits of the largest number in the array. 
+  When adding up to 1024 processors, we would expect a larger speedup, however due to the current implementation, there still a bottle neck of serilization of gathering all local sorts back to the master process and redistributing multiple times (number of digit times). This leads to a plateau of 2.7x speedup. In addition, the randomly sorted array dominates in run time for a lot of the graphs, this could be attributed to the fact that I initialized the array with a normal distribution from (0, INT32_MAX) whereas every other array type goes from (0, array_size). This will cause a higher runtime for radix sort as it depends on the number of digits of the largest number in the array.
+ <br/>
 
 - Column Sort<br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
