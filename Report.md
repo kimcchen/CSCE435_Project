@@ -655,18 +655,21 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingComm2_24.png" width=33% alt="Strong Scaling Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingComm2_26.png" width=33% alt="Strong Scaling Graph comm 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingComm2_28.png" width=33% alt="Strong Scaling Graph comm 2^28"><br/>
+        The graphs reveal poor scaling behavior, with communication time unexpectedly increasing as processor count grows. Larger input sizes show higher communication overhead, and perturbed data consistently performs worst. The zigzag pattern suggests network congestion and synchronization issues, indicating significant communication bottlenecks.<br/>
 
     - <strong>comm Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommPerturbed.png" width=33% alt="Speedup Graph comm Perturbed">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommRandom.png" width=33% alt="Speedup Graph comm Random">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommReverseSorted.png" width=33% alt="Speedup Graph comm Reverse Sorted">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommSorted.png" width=33% alt="Speedup Graph comm Sorted"><br/>
+        All input types demonstrate extremely poor speedup, falling far below the ideal scaling line. Most concerning is the negative scaling trend, where performance actually degrades with more processors, dropping to 16x slower than baseline at high processor counts. This consistent pattern across input types suggests fundamental flaws in the communication strategy.<br/>
 
     - <strong>comm Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCommPerturbed.png" width=33% alt="Weak Scaling Graph comm Perturbed">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCommRandom.png" width=33% alt="Weak Scaling Graph comm Random">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCommReverseSorted.png" width=33% alt="Weak Scaling Graph comm Reverse Sorted">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCommSorted.png" width=33% alt="Weak Scaling Graph comm Sorted"><br/>
+        Despite the expectation of constant execution time in weak scaling, communication time increases with both problem size and processor count. This upward trend, particularly pronounced at processor counts above 2^8, indicates that communication overhead grows disproportionately with problem size, suggesting non-optimal data distribution and message handling.<br/>
 
     - <strong>comp_large Strong Scaling Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_16.png" width=33% alt="Strong Scaling Graph comp_large 2^16">
@@ -676,19 +679,21 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_24.png" width=33% alt="Strong Scaling Graph comp_large 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_26.png" width=33% alt="Strong Scaling Graph comp_large 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_28.png" width=33% alt="Strong Scaling Graph comp_large 2^28"><br/>
+        Shows good scaling behavior with execution time decreasing as processor count increases. Sorted data consistently performs best while perturbed data shows highest computation times. The curves flatten at higher processor counts (2^8 - 2^10), indicating diminishing returns from additional processors.<br/>
     
     - <strong>comp_large Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommPerturbed.png" width=33% alt="Speedup Graph comp_large Perturbed">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommRandom.png" width=33% alt="Speedup Graph comp_large Random">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommReverseSorted.png" width=33% alt="Speedup Graph comp_large Reverse Sorted">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommSorted.png" width=33% alt="Speedup Graph comp_large Sorted"><br/>
+         Performance falls significantly below ideal scaling for all input types, with efficiency decreasing as processor count increases. Larger input sizes (2^26-2^28) show slightly better speedup initially but still degrade at higher processor counts. Sorted data shows marginally better speedup compared to other input types.<br/>
 
     - <strong>comp_large Weak Scaling Graph</strong><br/>
-        - <strong>comp_large Weak Scaling Graphs</strong><br/>
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargePerturbed.png" width=33% alt="Weak Scaling Graph comp_large Perturbed">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargeRandom.png" width=33% alt="Weak Scaling Graph comp_large Random">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargeReverseSorted.png" width=33% alt="Weak Scaling Graph comp_large Reverse Sorted">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargeSorted.png" width=33% alt="Weak Scaling Graph comp_large Sorted"><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargePerturbed.png" width=33% alt="Weak Scaling Graph comp_large Perturbed">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargeRandom.png" width=33% alt="Weak Scaling Graph comp_large Random">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargeReverseSorted.png" width=33% alt="Weak Scaling Graph comp_large Reverse Sorted">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargeSorted.png" width=33% alt="Weak Scaling Graph comp_large Sorted"><br/>
+        All input types show decreasing execution time with increased processors, contrary to ideal weak scaling where time should remain constant. Larger problem sizes consistently require more time, with perturbed and random data showing higher computation costs than sorted and reverse-sorted data.<br/>
 
     - <strong>main Strong Scaling Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_16.png" width=33% alt="Strong Scaling Graph main 2^16">
@@ -698,19 +703,31 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_24.png" width=33% alt="Strong Scaling Graph main 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_26.png" width=33% alt="Strong Scaling Graph main 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_28.png" width=33% alt="Strong Scaling Graph main 2^28"><br/>
+        The execution time shows irregular behavior, with unexpected increases at higher processor counts rather than the expected decrease. For smaller input sizes, performance is erratic across all input types. Larger input sizes (2^26-2^28) show more consistent decreasing trends, with sorted data generally performing better than random or perturbed.<br/>
         
-        - <strong>main Speedup Graphs</strong><br/>
+    - <strong>main Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupMainPerturbed.png" width=33% alt="Speedup Graph main Perturbed">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupMainRandom.png" width=33% alt="Speedup Graph main Random">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupMainReverseSorted.png" width=33% alt="Speedup Graph main Reverse Sorted">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupMainSorted.png" width=33% alt="Speedup Graph main Sorted"><br/>
+        Performance is significantly below ideal scaling for all cases. Larger input sizes (2^24-2^28) achieve better speedup than smaller ones but still plateau around 4x-8x improvement. Sorted data shows marginally better speedup, briefly exceeding ideal scaling at mid-range processor counts before degrading. All input types show diminishing returns after 2^6 processors.<br/>
 
-        - <strong>main Weak Scaling Graph</strong><br/>
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainPerturbed.png" width=33% alt="Weak Scaling Graph main Perturbed">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainRandom.png" width=33% alt="Weak Scaling Graph main Random">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainReverseSorted.png" width=33% alt="Weak Scaling Graph main Reverse Sorted">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainSorted.png" width=33% alt="Weak Scaling Graph main Sorted"><br/>
-      
+    - <strong>main Weak Scaling Graph</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainPerturbed.png" width=33% alt="Weak Scaling Graph main Perturbed">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainRandom.png" width=33% alt="Weak Scaling Graph main Random">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainReverseSorted.png" width=33% alt="Weak Scaling Graph main Reverse Sorted">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainSorted.png" width=33% alt="Weak Scaling Graph main Sorted"><br/>
+        Shows poor scaling characteristics with time initially decreasing then trending upward as processor count increases, contrary to ideal constant time expectation. Larger problem sizes consistently require more time across all input types, with perturbed and random data showing higher execution costs than sorted variants.<br/>
+    
+    - <strong>Cache Misses Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/cache_misses/CacheMisses2_25.png?raw=true" width="33%" alt="2^25 Cache Misses Graph">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/cache_misses/CacheMisses2_26.png?raw=true" width="33%" alt="2^26 Cache Misses Graph"><br/>
+        For the smaller dataset, L1 cache misses increase substantially with more processes across all input types, with reverse sorted data showing the highest miss rate at 1.02B misses with 32 processes. L2 cache misses show a more modest increase and remain relatively consistent across input types, with the gap between L1 and L2 misses widening as process count increases. When scaling to 2^26 elements, we see higher cache miss counts overall due to the larger data size, but interestingly, sorted data unexpectedly exhibits the highest L1 miss rate at 32 processes (1.6B misses). L1 misses show steeper scaling with process count compared to the smaller dataset, while L2 misses maintain similar patterns but at higher absolute values. The ratio between L1 and L2 misses becomes more pronounced with increased data size, suggesting that memory access patterns become increasingly inefficient as both process count and data size grow, likely contributing to the scaling limitations observed in the performance graphs.
+        <br/>
+    
+    - <Strong>Final Sample Sort Remarks</strong><br/>
+        The analysis of communication (comm), computation (comp_large), and overall performance (main) across different scaling metrics reveals significant performance challenges in this sample sort parallel implementation. The communication component shows severe scaling issues, with increasing overhead as processor counts grow, suggesting network congestion and synchronization bottlenecks, particularly evident in the negative speedup where communication actually becomes slower with more processors. While the computation portion shows better scaling characteristics, it still falls short of ideal speedup, especially at higher processor counts, indicating that work distribution becomes less efficient as we scale. These poor scaling behaviors can be attributed to several key factors: significant increases in cache misses (both L1 and L2) with larger process counts indicate deteriorating memory access patterns, suggesting compromised data locality; inefficient data partitioning and load balancing issues are revealed by unexpected behavior in sorted arrays and higher communication costs with perturbed data; and the dramatic increase in communication time with more processors suggests excessive data exchange between processors, becoming particularly problematic at higher processor counts where network contention is significant. The widening gap between L1 and L2 cache misses as data size and process count increase suggests that the implementation isn't effectively utilizing the memory hierarchy, leading to increased memory access times and reduced overall performance. To improve performance, the implementation would benefit from optimizing communication patterns to reduce frequency and volume of data exchange, implementing better data partitioning strategies for more balanced load distribution, improving cache utilization through better data locality<br/>
+
 - Merge Sort<br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/pres_figs/2^16/comm.png?raw=true" width=33% alt="Strong Scaling Graph comm 2^16">
