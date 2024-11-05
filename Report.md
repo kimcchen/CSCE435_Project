@@ -605,6 +605,10 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm28.png" width=33% alt="Speedup Graph comm 2^28"><br/>
         As seen in the Strong Scaling graphs, the smaller input sizes (2^16, 2^18, 2^20) have a decreasing Speedup as the number of processes increases. This is due to the communication overhead overtaking the benefit of using more processes, so to minimize communication time, it would be best to use 2 processes for those input types. For the rest of the graphs, the graphs appear random. This is due to the Strong Scaling graph being essentially constant, so any deviation from the average will cause a speedup or slowdown to be calculated.
         <br/>
+        - <strong>comm Weak Scaling Graph</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/weakscalingcomm.png" width=33% alt="Weak Scaling Graph comm 2^16"><br/>
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph actually does follow this slope for a bit, until 512 processes, where all but Sorted input types, experience a large increase in work per process. Once again, this can be explain with hardware variability as these times are quite small. The nodes may have been further away or ran slower than the other nodes, leading to a slowdown.
+        <br/>
         - <strong>comp_large Strong Scaling Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge16.png" width=33% alt="Strong Scaling Graph comp_large 2^16">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge18.png" width=33% alt="Strong Scaling Graph comp_large 2^18">
@@ -625,6 +629,10 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomplarge28.png" width=33% alt="Speedup Graph comp_large 2^28"><br/>
         Since the Strong Scaling graphs have an inversely proportional relationship between the comp_large time and the number of processes, we would expect a proportional relationship between the comp_large Speedup and the number of processes, which is shown for every graph. Due to the extremely strong strong scaling of comp_large, using the maximum number of processes will lead to the largest speedup, which is ideal.
         <br/>
+        - <strong>comp_large Weak Scaling Graph</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/weakscalingcomplarge.png" width=33% alt="Weak Scaling Graph comp_large 2^16"><br/>
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph does follow this relationship quite closely for all the input types, meaning that comp_large is also weakly scaled as the number of processes increases. Additionally, the Sorted input type is also the fastest among the input types, once again due to the underlying quicksort of std::sort not needing to make as many, if any, swaps.
+        <br/>
         - <strong>main Strong Scaling Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain16.png" width=33% alt="Strong Scaling Graph main 2^16">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain18.png" width=33% alt="Strong Scaling Graph main 2^18">
@@ -644,6 +652,10 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain26.png" width=33% alt="Speedup Graph main 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain28.png" width=33% alt="Speedup Graph main 2^28"><br/>
         For smaller input sizes (2^16, 2^18, 2^20), the Speedup of main goes down, which is expected since the Strong Scaling graphs indicate an increase in time as the number of processes increases. As the input size increases, the graphs show the expected proportional relationship between the Speedup and the number of processes. An interesting thing to note is that as the input size increases, the number of processes with the best speedup also increases. This can be explained by the comp_large time overtaking the comm time as the number of processes increases. Additionally, for larger input types, the Speedup begins to level off at 128 processes, in contrast to the comp_large Speedup never leveling off. This shows that the more random comm Speedup is affecting the Speedup of main, and the outliers in the comm Strong Scaling graph have a noticable effect on the runtime of main.
+        <br/>
+        - <strong>main Weak Scaling Graph</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/weakscalingmain.png" width=33% alt="Weak Scaling Graph main 2^16"><br/>
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph follows this relationship until 32 processes, where it sharply increases. This shows that the algorithm does not follow the ideal weak scaling, so the amount of work per processes is not even as both the amount of processes increase and the input size increases.
         <br/>
 
 - Sample Sort<br/>
@@ -805,57 +817,103 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/plots_cm/Total%20L2%20misses.jpg?raw=true" width="33%" alt="L2 Misses Graph"><br/>
         The behavior for the cache miss plots is as expected. We can see two separate sets of parallel lines on both plots that indicate that as the input size increase the number of cache misses also increase. Furthermore, we can also see that as the number of processes increase, the number of cache misses also increases. Both these observations align with expectations as with more data and more threads accessing that data, the number of cache misses will increase. Finally, we also see, based on the scale of the plots, that the number of L2 cache misses is greater than the number of L1 cache misses, which makes sense as the L1 cache is accessed before the L2 cache and has less memory.
 
-- Radix Sort<br/>
-- Radix Sort<br/>
- - <strong>comm Strong Scaling Graphs</strong><br/>
-     ADD GRAPHS
+
+Radix Sort<br/>
+ - <strong>Comm Strong Scaling Graphs</strong><br/>
+       <img width="33%" alt="commStrongScale2_28" src="https://github.com/user-attachments/assets/4b9a6872-4f17-41f9-9405-7a4a50161787">
+  <img width="33%" alt="commStrongScale2_26" src="https://github.com/user-attachments/assets/cfb90f65-8435-4af9-8a60-2cdbeba4e126">
+  <img width="33%" alt="commStrongScale2_24" src="https://github.com/user-attachments/assets/705db3ad-7d45-4b57-a556-d455eb1b3815">
+  <img width="33%" alt="commStrongScale2_22" src="https://github.com/user-attachments/assets/295631ea-2360-4cc4-afcb-a064bdc66f4a">
+  <img width="33%" alt="commStrongScale2_20" src="https://github.com/user-attachments/assets/70f0b450-9671-47c3-a7c3-faeb5c44e606">
+  <img width="33%" alt="commStrongScale2_18" src="https://github.com/user-attachments/assets/fb4b9fb5-8ae1-4030-b9da-c167041cee06">
+  <img width="33%" alt="commStrongScale2_16" src="https://github.com/user-attachments/assets/f7a1e24e-04ee-4c10-99b4-f932f46ab9f0">
       <br/>
-     GRAPH ANALYSIS
+     For lower array sizes such as 2^16 and 2^18, we notice a positive trend where as the number of processors increases, the communication time also increases. For array sizes that are higher that 2^18, we notice a plateau at 32 processors followed by a dip in communication time with a minor increase again for the highest number of processors. This dip could be due to the diminishing amount of data that each individual processor manages. Even when the volume of communication increases (more processors), there is less information passed between processors. The randomly sorted array dominates the total communication time, this is likely due to the fact that I had generated random with a normal distribution from (0, INT32_MAX) instead of capping the max value as the array_size. This makes sense as radix sort's runtime is affected mainly by array_size and the number of digits in each number. 
      <br/>
-    - <strong>comm Speedup Graphs</strong><br/>
-      ADD GRAPHS
+     <br/>
+- <strong>Comm Speedup Graphs</strong><br/>
+      <img width="33%" alt="commSpeedup2_28" src="https://github.com/user-attachments/assets/7fea8def-679e-42df-857d-da55d1f7347e">
+<img width="33%" alt="commSpeedup2_26" src="https://github.com/user-attachments/assets/b026b88a-9024-4a45-939a-5dfdf260b9fb">
+<img width="33%" alt="commSpeedup2_24" src="https://github.com/user-attachments/assets/0380814e-6643-4a39-9dd1-039518d93c55">
+<img width="33%" alt="commSpeedup2_22" src="https://github.com/user-attachments/assets/09640cd7-93d2-4ed9-82d7-e49649a53379">
+<img width="33%" alt="commSpeedup2_20" src="https://github.com/user-attachments/assets/acfa7f0e-8f61-43c0-8746-33e9d407fd72">
+<img width="33%" alt="commSpeedup2_18" src="https://github.com/user-attachments/assets/e37a1c66-d30c-4de3-bdc2-97ab889a94ce">
+<img width="33%" alt="commSpeedup2_16" src="https://github.com/user-attachments/assets/b09f80f0-9cd1-41b6-9fc2-a52ca7de4927">
        <br/>
-       ADD GRAPH ANALYSIS
+        For lower array sizes such as 2^16 and 2^18, we notice a negative trend where as the number of processors increases, the speed up decreases. This makes sense as for smaller array size, the communication overhead from more and more processors dominates because smaller sorting problems won't benefit as much from parallelism. For array sizes that are higher that 2^18, we notice a plateau at 32 processors followed by a surge in speed up at 512 processors. This plateau corresponds to the patterns seen in the strong scaling graphs. This speedup postive rate of change at 32 processors and on corresponds to a small turning point in decreasing communication times in the. This increase could be due to the diminishing amount of data that each individual processor manages. Even when the volume of communication increases (more processors), there is less information passed between individual processors which can lead to quicker communication. 
         <br/>
-    - <strong>comm Weak Scaling Graph</strong><br/>
-        ADD GRAPH <br/>
-        ADD GRAPH ANALYSIS
         <br/>
-
-    - <strong>comp_large Strong Scaling Graphs</strong><br/>
-    ADD GRAPHS
+- <strong>Comm Weak Scaling Graph</strong><br/>
+         <img width="33%" alt="weakScalingComm" src="https://github.com/user-attachments/assets/4910dd4b-1e27-41a8-92cf-ae027b7599df">
+<br/>
+        The ratio used to generate the weak scaling graph is 4:2, meaning that as input size quadruples, the number of processes doubles. Ideally, we would expect a our weak scaling graph to have a positive slope of 2 to match the ratio of how we scale our array sizes to the number of processors. In actually, our weak scaling graph initially follows this pattern but soon deviates from this ideal especially as we reach higher number of processors for larger array sizes. This deviation at 32 and 64 processors could be due to load imbalances between local processor counting sorts. While we see a dip in comminucation time in previous graphs, the increase in array size dominates the benefits of parallization even at higher number of processors. 
+        <br/>
+        <br/>
+- <strong>Computation Strong Scaling Graphs</strong><br/>
+      <img width="33%" alt="compStrongScale2_28" src="https://github.com/user-attachments/assets/1701f1a0-322e-4a7f-9f0f-742ab22b86f1">
+<img width="33%" alt="compStrongScale2_26" src="https://github.com/user-attachments/assets/1a9667d6-082c-4e66-bdf2-35265132dc04">
+<img width="33%" alt="compStrongScale2_24" src="https://github.com/user-attachments/assets/1206c733-346c-4fd8-a460-fbb2806e4ae1">
+<img width="33%" alt="compStrongScale2_22" src="https://github.com/user-attachments/assets/c36da454-c92e-42ee-a68f-bffbefea8b8f">
+<img width="33%" alt="compStrongScale2_20" src="https://github.com/user-attachments/assets/a4eb2e35-0340-44c0-bea3-c082d455b2ad">
+<img width="33%" alt="compStrongScale2_18" src="https://github.com/user-attachments/assets/9938de2c-8a3d-4d86-8645-bdd02086ac68">
+<img width="33%" alt="compStrongScale2_16" src="https://github.com/user-attachments/assets/ec806213-d2f7-4370-bdc7-e5bc4d174ff9">
       <br/>
-       ADD GRAPH ANALYSIS
+       The computation graphs across all array sizes demonstrates a negative relationship between number of processors and total computation time. This is an expected benefit and behavior from increase parallelism. At this project's scale, breaking down the local sorts into smaller chunks and scattering them amongst more processors is beneficial. One importanat note as before is that the type should not affect the computation time too much. While with random array_types, there is less locality of seeing the same digits (102, 57, 93)  vs (999, 998, 997), a major contributing factor of why random takes longer is the fact that I had generated the array with a normal distribution from (0, INT32_MAX) instead of (0, array_size), leading to much larger amounts of digits on average which is a key factor in radix sorts overall runtime. Another important aspect to point out is the plateau in performance increase at around 64 - 128 processors. While we see the benefits of parallelism for radix sort, there are diminishing returns for higher and higher processor counts. 
         <br/>
-    - <strong>comp_large Speedup Graphs</strong><br/>
-      ADD GRAPHS
+        <br/>
+- <strong>Computation Speedup Graphs</strong><br/>
+      <img width="33%" alt="compSpeedup2_28" src="https://github.com/user-attachments/assets/aec6bded-43fd-425d-8764-b09e3c22fc49">
+<img width="33%" alt="compSpeedup2_26" src="https://github.com/user-attachments/assets/167bf322-430c-4632-afec-48549ae1d06b">
+<img width="33%" alt="compSpeedup2_24" src="https://github.com/user-attachments/assets/770a7212-a37f-424c-90f6-0dd1dc5e5533">
+<img width="33%" alt="compSpeedup2_22" src="https://github.com/user-attachments/assets/afc610df-9739-4541-906d-1eae19965bc8">
+<img width="33%" alt="compSpeedup2_20" src="https://github.com/user-attachments/assets/6b6015f1-edc1-43bb-aa18-da6ef94059b9">
+<img width="33%" alt="compSpeedup2_18" src="https://github.com/user-attachments/assets/e1bcece5-67b6-4e94-a4c9-2254ea3c49bd">
+<img width="33%" alt="compSpeedup2_16" src="https://github.com/user-attachments/assets/510577d5-052c-4148-93a1-b4059d6d51eb">
   <br/>
-       ADD GRAPH ANALYSIS
+       The speedup graphs demonstrate how computation time is largly uneffected by the array type and also works to demonstrate how effective radix sort benefits from parallelization. At most, we see a speed up of over 1000x for 1024 processors. As we increase the array sizes, we slowly approach a more ideal speed up where 64 processors trends toward a speedup of 64x and 256 processors trends toward a speed up of 256x. 
         <br/>
-    - <strong>comp_large Weak Scaling Graph</strong><br/>
-      ADD GRAPH <br/>
-       ADD GRAPH ANALYSIS
+    - <strong>Computation Weak Scaling Graph</strong><br/>
+       <img width="33%" alt="weakScalingComp" src="https://github.com/user-attachments/assets/5d27a12d-63a2-4c10-9dc3-210edb5f3437">
+<br/>
+       The ratio used to generate the weak scaling graph is 4:2, meaning that as input size quadruples, the number of processes doubles. Ideally, we would expect a our weak scaling graph to have a positive slope of 2 to match the ratio of how we scale our array sizes to the number of processors. In actually, our weak scaling graph seems to undershoot this expected results. This indicates a better computation performance than expected. When splitting each array into sub arrays, the computation on sorted, reverse, and one percent preturbed could all benefit more from data locality when using buckets in counting sort leading to less cache misses. 
+        <br/>
+- <strong>Main Strong Scaling Graphs</strong>
+  <br/>
+       <img width="33%" alt="mainStrongScale2_28" src="https://github.com/user-attachments/assets/f8980601-f4de-4a12-881a-5c2e56fdba66">
+<img width="33%" alt="mainStrongScale2_26" src="https://github.com/user-attachments/assets/b1546b9f-09aa-405a-84a2-d19854dc0350">
+<img width="33%" alt="mainStrongScale2_24" src="https://github.com/user-attachments/assets/3de835ee-91b0-4b1b-b38e-d318f9e80c7b">
+<img width="33%" alt="mainStrongScale2_22" src="https://github.com/user-attachments/assets/c3be9ab7-bc5d-431a-a25a-28eee0459aec">
+<img width="33%" alt="mainStrongScale2_20" src="https://github.com/user-attachments/assets/d8c872a9-d86b-4aaa-8aff-bf6f97b180fb">
+<img width="33%" alt="mainStrongScale2_18" src="https://github.com/user-attachments/assets/21dfcdf0-40fd-468f-b136-7e95291a635e">
+<img width="33%" alt="mainStrongScale2_16" src="https://github.com/user-attachments/assets/994a9480-5652-4ac8-9efa-2ec2f9c68e58">
+  <br/>
+       In the main strong scaling graphs we see two trends for large and small array sizes. In general, for smaller array sizes (2^16 - 22), the whole computation time initially benefits a little from parallelization however as the number of processors increases the whole program begins to increase in total time. It is likely that for these smaller array sizes, there are faster diminishing returns as each processor is responsible for managing less and less data. There is also a clear overtake of communication overhead as a dominating factor of whole program runtime at processors over 256 for these smaller array sizes. On the flip side, larger array sizes have complex enough sorts to continously see perfomance improvement through all array sizes. For larger arrays, the communication overhead is trumped by the benefits from parallelization. 
         <br/>
 
-    - <strong>main Strong Scaling Graphs</strong><br/>
-       ADD GRAPHS
-  <br/>
-       ADD GRAPH ANALYSIS
-        <br/>
     - <strong>main Speedup Graphs</strong><br/>
-       ADD GRAPHS <br/>
-       ADD GRAPH ANALYSIS
+        <img width="33%" alt="mainSpeedup2_28" src="https://github.com/user-attachments/assets/e6b4a5a1-a6d3-467f-aed0-b81fc815f05c">
+<img width="33%" alt="mainSpeedup2_26" src="https://github.com/user-attachments/assets/4cd68c57-06d2-487c-be9f-cedc57706b0b">
+<img width="33%" alt="mainSpeedup2_24" src="https://github.com/user-attachments/assets/2361ddb0-fd36-45a0-bef4-6cebbbad2809">
+<img width="33%" alt="mainSpeedup2_22" src="https://github.com/user-attachments/assets/7ed14522-a1fc-4cea-9043-717135499b2b">
+<img width="33%" alt="mainSpeedup2_20" src="https://github.com/user-attachments/assets/76751945-e84a-4b24-b50b-e793d243e1a8">
+<img width="33%" alt="mainSpeedup2_18" src="https://github.com/user-attachments/assets/15f749d9-2a74-4e3f-96d0-f2ee56a41427">
+<img width="33%" alt="mainSpeedup2_16" src="https://github.com/user-attachments/assets/5ce4aee4-1aa1-495a-823a-2d014cb09e19">
+<br/>
+       In the speedup graphs we see that the as the array sizes increase, the speed up graph slowly trends to resemble a y = x^(1/2) square root graph. For smaller array sizes we see small inital speed ups with a dip into speedups less than 2x and 1x for larger array sizes. For larger array sizes, we see a speed up plateau of 2.7x at 64 - 128 processors. Once again we can better benefit from parallelism in larger arrays with more complex problems within the scope of (2, 1024) processors. The whole computation time doesn't differ much based on array type excluding random (which has been mentioned and explained before, see additional details as to reasons for deviation). 
         <br/>
       <strong>main Weak Scaling Graph</strong><br/>
-       ADD GRAPH <br/>
-       ADD GRAPH ANALYSIS
+      <img width="33%" alt="weakScalingMain" src="https://github.com/user-attachments/assets/8692d17f-ef2d-4900-b6dd-800ba085adef">
+       <br/>
+       The ratio used to generate the weak scaling graph is 4:2, meaning that as input size quadruples, the number of processes doubles. Ideally, we would expect a our weak scaling graph to have a positive slope of 2 to match the ratio of how we scale our array sizes to the number of processors. In actually, our weak scaling graph initially follows this pattern but soon deviates from this ideal especially as we reach higher number of processors for larger array sizes. This deviation at 32 and 64 processors could be due to load imbalances between local processor counting sorts. The increase in array size dominates the benefits of parallization at higher number of processors and array sizes. 
         <br/>
-
       <strong>Cache Misses Graphs</strong><br/>
-      ADD GRAPHS <br/>
-       ADD GRAPH ANALYSIS
+      <img width="33%" alt="l1CacheMisses" src="https://github.com/user-attachments/assets/590244f5-ea90-4366-89ef-60f0f7e0f136">
+<img width="33%" alt="l2CacheMisses" src="https://github.com/user-attachments/assets/c48f2d84-efe5-40ee-b7c2-857472ba33b8">
+       <br/>
+       There are more L1 cache misses compared to L2 which follows our expected behavior as an L2 miss first has to fall through an L1 miss. Furthermore, we see that random array types dominate the amount of cache misses. This can be accounted for by the aforementioned lack of data locality with random numbers when accessing bucket counts, and the fact that I created the random array with (0, INTMAX_32) instead of array_max. We also see that the number of cache misses decreases as we increase processors this is because there is less data that each processor manages. Finally, when we increase the array size by a factor of two we generally see a trend of 2x cache misses. 
         <br/>
     - <strong>Additional Notes</strong><br/>
+  When adding up to 1024 processors, we would expect a larger speedup, however due to the current implementation, there still a bottle neck of serilization of gathering all local sorts back to the master process and redistributing multiple times (number of digit times). This leads to a plateau of 2.7x speedup. In addition, the randomly sorted array dominates in run time for a lot of the graphs, this could be attributed to the fact that I initialized the array with a normal distribution from (0, INT32_MAX) whereas every other array type goes from (0, array_size). This will cause a higher runtime for radix sort as it depends on the number of digits of the largest number in the array. 
 
 - Column Sort<br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
