@@ -660,6 +660,11 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/weakscalingmain.png" width=33% alt="Weak Scaling Graph main 2^16"><br/>
         The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. The graph seems to follow this overall, with 1PercentPerturbed reaching a peak and falling back down, possibly because this particular input type doesn't follow the ideal weak scaling.
         <br/>
+        - <strong>Cache Misses Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/cachemissesl1.png" width="33%" alt="L1 Misses Graph">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/cachemissesl2.png" width="33%" alt="L2 Misses Graph"><br/>
+ We can see from the L1 graph that as more processes are involved, more data is being accessed that does not fit into the L1 cache, leading to more frequent misses. With the L2 cache being larger than L1, it can accommodate more data, which helps explain why L2 cache misses are significantly lower than L1 cache misses. We can see that higher parallelism can stress the L1 cache due to smaller size, while l2 cache is a bit more resilient and shows minimal misses even as the number or processes increases. L2 cache can better handle the data load distrbuted among processes.
+        <br/>
 
 - Sample Sort<br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
