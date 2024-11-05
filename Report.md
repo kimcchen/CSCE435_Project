@@ -577,7 +577,7 @@ We will collect them using Caliper and compare them using Thicket.
     The graph indicates that the current algorithm benefits from parallelism but the speedup is maxed out at 2.7x. This is a lower number than expected. When adding up to 1024 processors, we would expect a larger speedup, however due to the current implementation, there still a bottle neck of serilization of gathering all local sorts back to the master process and redistributing multiple times (number of digit times). This leads to a plateau of 2.7x speedup. 
     ![Large Comm time](https://github.com/user-attachments/assets/7dd51ee5-6c2c-4ed5-9ca7-b499eae5d19a)  
     *Labeled incorrecly as small* 
-<br/>
+    <br/>
 - Column Sort  
     <img alt="Strong Scaling Graph" src="https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg?raw=true"><br/>
     The graph indicates that the algorithm is strongly scaled, with a bound of about 2 seconds due to the sequential runtime.  
