@@ -379,18 +379,18 @@ We will use the Grace cluster on the TAMU HPRC.
             end if
             
             # For each iteration, process g bits at a time (Radix Sorting)
-            max_bits <- get bits max(arr)
-            for i: 0 -> (max_bits / g) do:
-                local_bucket_counts <- counting_sort(localbuffer, g, i)
+           
+            for i: 0 -> (max digits of largest number) do:
+                local_bucket_counts <- counting_sort(localbuffer, 10, i)
         
                 # Aggregate the result of counting sort, make global count of keys per bucket
                 global_bucket_counts <- MPI all_to_all(local_bucket_counts)  
                 prefix_sums <- get prefix sums of global_bucket_counts
-                bucketed_keys <- distribute_keys(localbuffer, g, i, prefix_sums)
+                bucketed_keys <- distribute_keys(localbuffer, 10, i, prefix_sums)
 
                 # update these results to preserve order
                 exchanged_keys <- MPI all_to_all_exchange(bucketed_keys)
-                sort_by_g_bits(exchanged_keys, g, i)
+                sort_by_digits(exchanged_keys, 10, i)
                 localbuffer <- exchanged_keys
             end for
             
@@ -534,7 +534,8 @@ We will collect them using Caliper and compare them using Thicket.
     ![Merge Sort Calltree](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/calltree.png?raw=true)  
 
 - Radix Sort Calltree  
-  <img width="708" alt="Screenshot 2024-10-22 at 5 59 43 PM" src="https://github.com/user-attachments/assets/91253424-0569-49a0-b2be-0d585fac01b1">
+<img width="414" alt="Screenshot 2024-11-04 at 11 22 54 PM" src="https://github.com/user-attachments/assets/d3f1cd9a-a539-48fd-89dc-c4570f3fdd61">
+
 - Column Sort Calltree  
     `data_init_X` is `data_init_runtime`  
     ![Column Sort Calltree](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/column_sort_calltree.png?raw=true)
@@ -570,11 +571,13 @@ We will collect them using Caliper and compare them using Thicket.
     Here is an example of how parallelization can improve performance. The graph shows the speedup of the whole program for an input size of 2^26 and a reverse sorted input. We can see that increasing the number of processes allows for drastic improvements of up to 10x in runtime up to 128 processes, but then results in diminishing returns. More analysis and plots are available in the merge_sort folder.
 
 - Radix Sort:
-  - Limitations with the algorithm: Innefficiencies with the current implementation resulted in limited data for higher number of processors. Because of the nature of radix sort using counting sort under the hood, there is a lot of potential for uneven load balances between processors. (There can be more of one digits and a skewed distribution of buckets)  
-  ![Whole Comp Time vs Processors](https://github.com/user-attachments/assets/a41b43d3-023d-4cc2-855f-c89532e7c3fe)  
-  The graph indicates that the current algorithm is strongly scaled to a certain point where we see diminishing returns at 512+ processors. The high runtime can be attributed to the current inefficient communication.  
+<img width="916" alt="Screenshot 2024-11-04 at 11 25 42 PM" src="https://github.com/user-attachments/assets/1ef52577-1426-466d-bf2d-923474fcfe12">
+<br/>
+
+  The graph indicates that the current algorithm benefits from parallelism but the speedup is maxed out at 2.7x. This is a lower number than expected. When adding up to 1024 processors, we would expect a larger speedup, however due to the current implementation, there still a bottle neck of serilization of gathering all local sorts back to the master process and redistributing multiple times (number of digit times). This leads to a plateau of 2.7x speedup. 
   ![Large Comm time](https://github.com/user-attachments/assets/7dd51ee5-6c2c-4ed5-9ca7-b499eae5d19a)  
   *Labeled incorrecly as small* 
+<br/>
 - Column Sort  
     ![Strong Scaling Graph](https://github.com/kimcchen/CSCE435_Project/blob/main/column_sort/plots/Strong%20Scaling%20of%20main%20for%20sorting%202^28%20Random%20elements.jpg?raw=true)  
     The graph indicates that the algorithm is strongly scaled, with a bound of about 2 seconds due to the sequential runtime.  
@@ -593,7 +596,7 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscaling24.png" width=33% alt="Strong Scaling Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscaling26.png" width=33% alt="Strong Scaling Graph comm 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscaling28.png" width=33% alt="Strong Scaling Graph comm 2^28"><br/>
-        description
+        There seems to be an overall upward trend for comm time for all input sizes. For the smaller input sizes (2^16, 2^18, 2^20), the comm time seems to eventually reach a peak and decrease as the number of processes increases. We can see that this is not the case for larger input sizes, where communciation time clearly increases as the number of processes increase. This is due to the comparison based nature of bitonic sort, where lots of communication is required between processes in order to correctly sort each subarray correctly. Naturally, this would mean greater communication times compared to the other sorting algorithms that may not need to send and receive as much, if at all.
         <br/>
         - <strong>comm Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm16.png" width=33% alt="Speedup Graph comm 2^16">
@@ -603,11 +606,11 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm24.png" width=33% alt="Speedup Graph comm 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm26.png" width=33% alt="Speedup Graph comm 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm28.png" width=33% alt="Speedup Graph comm 2^28"><br/>
-        As seen in the Strong Scaling graphs, the smaller input sizes (2^16, 2^18, 2^20) have a decreasing Speedup as the number of processes increases. This is due to the communication overhead overtaking the benefit of using more processes, so to minimize communication time, it would be best to use 2 processes for those input types. For the rest of the graphs, the graphs appear random. This is due to the Strong Scaling graph being essentially constant, so any deviation from the average will cause a speedup or slowdown to be calculated.
+        As seen in the Strong Scaling graphs, the smaller input sizes (2^16, 2^18, 2^20) have a decreasing Speedup as the number of processes increases. This can be due to the communication overhead overtaking the benefit of using more processes. We see that to diminish those communication cost overheads, using 2 processes would be most beneficial. The rest of the graphs seem to be pretty random, with the largest input size (2^28) seeming to have an increase in speedup as the number of processes increase, potentially due to more efficient splitting of data and communication in reverse sorted arrays.
         <br/>
         - <strong>comm Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/weakscalingcomm.png" width=33% alt="Weak Scaling Graph comm 2^16"><br/>
-        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph actually does follow this slope for a bit, until 512 processes, where all but Sorted input types, experience a large increase in work per process. Once again, this can be explain with hardware variability as these times are quite small. The nodes may have been further away or ran slower than the other nodes, leading to a slowdown.
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. We see here that 1PercentPerturbed seems to see a spike in communication time at 2^20, which suggests that this input type is particularly sensitive to communication overhead. Random follows a more gradual trend, which could mean it is a bit more resilient to communication overhead, potentially due to the more random nature of the data.
         <br/>
         - <strong>comp_large Strong Scaling Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge16.png" width=33% alt="Strong Scaling Graph comp_large 2^16">
@@ -617,7 +620,7 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge24.png" width=33% alt="Strong Scaling Graph comp_large 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge26.png" width=33% alt="Strong Scaling Graph comp_large 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge28.png" width=33% alt="Strong Scaling Graph comp_large 2^28"><br/>
-        All the graphs show an inversely proprotional relationship between the comp_large time and the number of processes for every input type. Interestingly, the sorted input type is faster for every input size. This is due to the algorithm using std::sort, which uses an implementation of quicksort. Since the input is already sorted, the quicksort algorithmn does not need to make as many, if any, swaps, so it runs quicker. Additionally, for the graphs that have this data point, the graphs level off at about 128 processes, indicating that there is not much more that can be parallelized and sequential runtime is now the limiting factor. These graphs also indicate that the comp_large scales strongly with the number of processes.
+        The strong scaling graphs for comp_large seem to be constant for the smaller input sizes. This may be due to an error in my implementation where I may have not as efficiently split the workload across processes so there isn't enough work for each process to be fully utilized, resulting in a computation time of near zero. For larger input sizes, though, we see that there is an overall inverse relationship where as the number of processes increases, the comp_large time decreases. This can be because since my implementation of bitonic sort internally uses quicksort to sort the smaller subarrays, the algorithm may better divide and conquer, resulting in a quicker run time.
         <br/>
         - <strong>comp_large Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomplarge16.png" width=33% alt="Speedup Graph comp_large 2^16">
@@ -627,11 +630,11 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomplarge24.png" width=33% alt="Speedup Graph comp_large 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomplarge26.png" width=33% alt="Speedup Graph comp_large 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomplarge28.png" width=33% alt="Speedup Graph comp_large 2^28"><br/>
-        Since the Strong Scaling graphs have an inversely proportional relationship between the comp_large time and the number of processes, we would expect a proportional relationship between the comp_large Speedup and the number of processes, which is shown for every graph. Due to the extremely strong strong scaling of comp_large, using the maximum number of processes will lead to the largest speedup, which is ideal.
+         Because of the relatively inversely proportional relationship betwen comp_large time and number of processes, it is reasonable to expect a proportional relationship between comp_large speedup and the number of proceesses.
         <br/>
         - <strong>comp_large Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/weakscalingcomplarge.png" width=33% alt="Weak Scaling Graph comp_large 2^16"><br/>
-        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph does follow this relationship quite closely for all the input types, meaning that comp_large is also weakly scaled as the number of processes increases. Additionally, the Sorted input type is also the fastest among the input types, once again due to the underlying quicksort of std::sort not needing to make as many, if any, swaps.
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. This graph in particular seems to follow this ratio pretty closely, indicating that comp_large is also weakly scaled as the number of processes increases. We see that the random input type is the fastest out of all of the different types, potentially due to balanced partitioning. 
         <br/>
         - <strong>main Strong Scaling Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain16.png" width=33% alt="Strong Scaling Graph main 2^16">
@@ -641,7 +644,7 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain24.png" width=33% alt="Strong Scaling Graph main 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain26.png" width=33% alt="Strong Scaling Graph main 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain28.png" width=33% alt="Strong Scaling Graph main 2^28"><br/>
-        For smaller input sizes (2^16, 2^18, 2^20), the graphs actually show an increase in main time as the number of processes increases. This is due to the communication overhead overtaking the benefits of using more processes, as indicated by the strong scaling graphs of comm. As the input size increases, however, the graphs start to show the expected inversely proportional relationship between the time and the number of processes. Once again, the Sorted input type is the fastest for those graphs, which was indicated in the comp_large strong scaling graphs. The scaling also begins to level off at 128 processes, which was also indicated by the comp_large strong scaling graphs. This means that for the larger input sizes, the comp_large time overtakes the comm time, so the main graphs will be closer to the comp_large graphs. The graphs for the larger input sizes also indicate that main scales strongly with the number of processes.
+        For smaller input sizes (2^16, 2^18, 2^20), the graphs actually show an increase in main time as the number of processes increases. This is due to the communication overhead overtaking the benefits of using more processes, as indicated by the strong scaling graphs of main. As the input size increases, however, the graphs start to show the expected inversely proportional relationship between the time and the number of processes. The graphs for the larger input sizes also indicate that main scales strongly with the number of processes.
         <br/>
         - <strong>main Speedup Graphs</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain16.png" width=33% alt="Speedup Graph main 2^16">
@@ -651,11 +654,11 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain24.png" width=33% alt="Speedup Graph main 2^24">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain26.png" width=33% alt="Speedup Graph main 2^26">
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain28.png" width=33% alt="Speedup Graph main 2^28"><br/>
-        For smaller input sizes (2^16, 2^18, 2^20), the Speedup of main goes down, which is expected since the Strong Scaling graphs indicate an increase in time as the number of processes increases. As the input size increases, the graphs show the expected proportional relationship between the Speedup and the number of processes. An interesting thing to note is that as the input size increases, the number of processes with the best speedup also increases. This can be explained by the comp_large time overtaking the comm time as the number of processes increases. Additionally, for larger input types, the Speedup begins to level off at 128 processes, in contrast to the comp_large Speedup never leveling off. This shows that the more random comm Speedup is affecting the Speedup of main, and the outliers in the comm Strong Scaling graph have a noticable effect on the runtime of main.
+        For smaller input sizes (2^16, 2^18, 2^20), the Speedup of main goes down, which is expected since the Strong Scaling graphs indicate an increase in time as the number of processes increases. As the input size increases, we can see that the graphs reach a peak and then go back down. This could be due to the communication overhead that occurs when computing with larger input sizes, slowing down overall main computation past a certain point.
         <br/>
         - <strong>main Weak Scaling Graph</strong><br/>
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/weakscalingmain.png" width=33% alt="Weak Scaling Graph main 2^16"><br/>
-        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. Thus, we would expect a slope of 2 for the graph, indicating that the work per process should double. The graph follows this relationship until 32 processes, where it sharply increases. This shows that the algorithm does not follow the ideal weak scaling, so the amount of work per processes is not even as both the amount of processes increase and the input size increases.
+        The ratio used to produce the graph is 4:2, so every time the input size quadruples, the number of processes doubles. The graph seems to follow this overall, with 1PercentPerturbed reaching a peak and falling back down, possibly because this particular input type doesn't follow the ideal weak scaling.
         <br/>
 
 - Sample Sort<br/>
