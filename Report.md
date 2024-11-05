@@ -637,63 +637,59 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingComm2_28.png" width=33% alt="Strong Scaling Graph comm 2^28"><br/>
 
     - <strong>comm Speedup Graphs</strong><br/>
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomm16.png" width=33% alt="Speedup Graph comm 2^16">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomm18.png" width=33% alt="Speedup Graph comm 2^18">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomm20.png" width=33% alt="Speedup Graph comm 2^20">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomm22.png" width=33% alt="Speedup Graph comm 2^22">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomm24.png" width=33% alt="Speedup Graph comm 2^24">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomm26.png" width=33% alt="Speedup Graph comm 2^26">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomm28.png" width=33% alt="Speedup Graph comm 2^28"><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommPerturbed.png" width=33% alt="Speedup Graph comm Perturbed">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommRandom.png" width=33% alt="Speedup Graph comm Random">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommReverseSorted.png" width=33% alt="Speedup Graph comm Reverse Sorted">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommSorted.png" width=33% alt="Speedup Graph comm Sorted"><br/>
 
     - <strong>comm Weak Scaling Graph</strong><br/>
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/weakscalingcomm.png" width=33% alt="Weak Scaling Graph comm"><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCommPerturbed.png" width=33% alt="Weak Scaling Graph comm Perturbed">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCommRandom.png" width=33% alt="Weak Scaling Graph comm Random">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCommReverseSorted.png" width=33% alt="Weak Scaling Graph comm Reverse Sorted">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCommSorted.png" width=33% alt="Weak Scaling Graph comm Sorted"><br/>
 
     - <strong>comp_large Strong Scaling Graphs</strong><br/>
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingcomp_large16.png" width=33% alt="Strong Scaling Graph comp_large 2^16">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingcomp_large18.png" width=33% alt="Strong Scaling Graph comp_large 2^18">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingcomp_large20.png" width=33% alt="Strong Scaling Graph comp_large 2^20">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingcomp_large22.png" width=33% alt="Strong Scaling Graph comp_large 2^22">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingcomp_large24.png" width=33% alt="Strong Scaling Graph comp_large 2^24">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingcomp_large26.png" width=33% alt="Strong Scaling Graph comp_large 2^26">
-        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingcomp_large28.png" width=33% alt="Strong Scaling Graph comp_large 2^28"><br/>
-
-      - <strong>comp_large Speedup Graphs</strong><br/>
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomp_large16.png" width=33% alt="Speedup Graph comp_large 2^16">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomp_large18.png" width=33% alt="Speedup Graph comp_large 2^18">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomp_large20.png" width=33% alt="Speedup Graph comp_large 2^20">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomp_large22.png" width=33% alt="Speedup Graph comp_large 2^22">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomp_large24.png" width=33% alt="Speedup Graph comp_large 2^24">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomp_large26.png" width=33% alt="Speedup Graph comp_large 2^26">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupcomp_large28.png" width=33% alt="Speedup Graph comp_large 2^28"><br/>
-
-      - <strong>comp_large Weak Scaling Graph</strong><br/>
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/weakscalingcomp_large.png" width=33% alt="Weak Scaling Graph comp_large"><br/>
-
-      - <strong>main Strong Scaling Graphs</strong><br/>
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingmain16.png" width=33% alt="Strong Scaling Graph main 2^16">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingmain18.png" width=33% alt="Strong Scaling Graph main 2^18">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingmain20.png" width=33% alt="Strong Scaling Graph main 2^20">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingmain22.png" width=33% alt="Strong Scaling Graph main 2^22">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingmain24.png" width=33% alt="Strong Scaling Graph main 2^24">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingmain26.png" width=33% alt="Strong Scaling Graph main 2^26">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/strongscalingmain28.png" width=33% alt="Strong Scaling Graph main 2^28"><br/>
-
-      - <strong>main Speedup Graphs</strong><br/>
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupmain16.png" width=33% alt="Speedup Graph main 2^16">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupmain18.png" width=33% alt="Speedup Graph main 2^18">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupmain20.png" width=33% alt="Speedup Graph main 2^20">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupmain22.png" width=33% alt="Speedup Graph main 2^22">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupmain24.png" width=33% alt="Speedup Graph main 2^24">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupmain26.png" width=33% alt="Speedup Graph main 2^26">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/speedupmain28.png" width=33% alt="Speedup Graph main 2^28"><br/>
-
-      - <strong>main Weak Scaling Graph</strong><br/>
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots/weakscalingmain.png" width=33% alt="Weak Scaling Graph main"><br/>
-
-      - <strong>Cache Misses Graphs</strong><br/>
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots_cm/L1misses.png" width="33%" alt="L1 Misses Graph">
-            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/plots_cm/L2misses.png" width="33%" alt="L2 Misses Graph"><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_16.png" width=33% alt="Strong Scaling Graph comp_large 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_18.png" width=33% alt="Strong Scaling Graph comp_large 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_20.png" width=33% alt="Strong Scaling Graph comp_large 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_22.png" width=33% alt="Strong Scaling Graph comp_large 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_24.png" width=33% alt="Strong Scaling Graph comp_large 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_26.png" width=33% alt="Strong Scaling Graph comp_large 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingCompLarge2_28.png" width=33% alt="Strong Scaling Graph comp_large 2^28"><br/>
     
+    - <strong>comp_large Speedup Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommPerturbed.png" width=33% alt="Speedup Graph comp_large Perturbed">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommRandom.png" width=33% alt="Speedup Graph comp_large Random">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommReverseSorted.png" width=33% alt="Speedup Graph comp_large Reverse Sorted">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupCommSorted.png" width=33% alt="Speedup Graph comp_large Sorted"><br/>
+
+    - <strong>comp_large Weak Scaling Graph</strong><br/>
+        - <strong>comp_large Weak Scaling Graphs</strong><br/>
+            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargePerturbed.png" width=33% alt="Weak Scaling Graph comp_large Perturbed">
+            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargeRandom.png" width=33% alt="Weak Scaling Graph comp_large Random">
+            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargeReverseSorted.png" width=33% alt="Weak Scaling Graph comp_large Reverse Sorted">
+            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingCompLargeSorted.png" width=33% alt="Weak Scaling Graph comp_large Sorted"><br/>
+
+    - <strong>main Strong Scaling Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_16.png" width=33% alt="Strong Scaling Graph main 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_18.png" width=33% alt="Strong Scaling Graph main 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_20.png" width=33% alt="Strong Scaling Graph main 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_22.png" width=33% alt="Strong Scaling Graph main 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_24.png" width=33% alt="Strong Scaling Graph main 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_26.png" width=33% alt="Strong Scaling Graph main 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/strong_scaling_plots/StrongScalingMain2_28.png" width=33% alt="Strong Scaling Graph main 2^28"><br/>
+        
+        - <strong>main Speedup Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupMainPerturbed.png" width=33% alt="Speedup Graph main Perturbed">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupMainRandom.png" width=33% alt="Speedup Graph main Random">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupMainReverseSorted.png" width=33% alt="Speedup Graph main Reverse Sorted">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/speedup_plots/SpeedupMainSorted.png" width=33% alt="Speedup Graph main Sorted"><br/>
+
+        - <strong>main Weak Scaling Graph</strong><br/>
+            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainPerturbed.png" width=33% alt="Weak Scaling Graph main Perturbed">
+            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainRandom.png" width=33% alt="Weak Scaling Graph main Random">
+            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainReverseSorted.png" width=33% alt="Weak Scaling Graph main Reverse Sorted">
+            <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/sample_sort/weak_scaling_plots/WeakScalingMainSorted.png" width=33% alt="Weak Scaling Graph main Sorted"><br/>
       
 - Merge Sort<br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
