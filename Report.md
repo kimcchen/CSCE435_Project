@@ -635,6 +635,16 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain28.png" width=33% alt="Strong Scaling Graph main 2^28"><br/>
         For smaller input sizes (2^16, 2^18, 2^20), the graphs actually show an increase in main time as the number of processes increases. This is due to the communication overhead overtaking the benefits of using more processes, as indicated by the strong scaling graphs of comm. As the input size increases, however, the graphs start to show the expected inversely proportional relationship between the time and the number of processes. Once again, the Sorted input type is the fastest for those graphs, which was indicated in the comp_large strong scaling graphs. The scaling also begins to level off at 128 processes, which was also indicated by the comp_large strong scaling graphs. This means that for the larger input sizes, the comp_large time overtakes the comm time, so the main graphs will be closer to the comp_large graphs. The graphs for the larger input sizes also indicate that main scales strongly with the number of processes.
         <br/>
+        - <strong>main Speedup Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain16.png" width=33% alt="Speedup Graph main 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain18.png" width=33% alt="Speedup Graph main 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain20.png" width=33% alt="Speedup Graph main 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain22.png" width=33% alt="Speedup Graph main 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain24.png" width=33% alt="Speedup Graph main 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain26.png" width=33% alt="Speedup Graph main 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupmain28.png" width=33% alt="Speedup Graph main 2^28"><br/>
+        For smaller input sizes (2^16, 2^18, 2^20), the Speedup of main goes down, which is expected since the Strong Scaling graphs indicate an increase in time as the number of processes increases. As the input size increases, the graphs show the expected proportional relationship between the Speedup and the number of processes. An interesting thing to note is that as the input size increases, the number of processes with the best speedup also increases. This can be explained by the comp_large time overtaking the comm time as the number of processes increases. Additionally, for larger input types, the Speedup begins to level off at 128 processes, in contrast to the comp_large Speedup never leveling off. This shows that the more random comm Speedup is affecting the Speedup of main, and the outliers in the comm Strong Scaling graph have a noticable effect on the runtime of main.
+        <br/>
 
 - Sample Sort<br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
