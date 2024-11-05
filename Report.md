@@ -605,6 +605,16 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomm28.png" width=33% alt="Speedup Graph comm 2^28"><br/>
         As seen in the Strong Scaling graphs, the smaller input sizes (2^16, 2^18, 2^20) have a decreasing Speedup as the number of processes increases. This is due to the communication overhead overtaking the benefit of using more processes, so to minimize communication time, it would be best to use 2 processes for those input types. For the rest of the graphs, the graphs appear random. This is due to the Strong Scaling graph being essentially constant, so any deviation from the average will cause a speedup or slowdown to be calculated.
         <br/>
+        - <strong>comp_large Strong Scaling Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge16.png" width=33% alt="Strong Scaling Graph comp_large 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge18.png" width=33% alt="Strong Scaling Graph comp_large 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge20.png" width=33% alt="Strong Scaling Graph comp_large 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge22.png" width=33% alt="Strong Scaling Graph comp_large 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge24.png" width=33% alt="Strong Scaling Graph comp_large 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge26.png" width=33% alt="Strong Scaling Graph comp_large 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingcomplarge28.png" width=33% alt="Strong Scaling Graph comp_large 2^28"><br/>
+        All the graphs show an inversely proprotional relationship between the comp_large time and the number of processes for every input type. Interestingly, the sorted input type is faster for every input size. This is due to the algorithm using std::sort, which uses an implementation of quicksort. Since the input is already sorted, the quicksort algorithmn does not need to make as many, if any, swaps, so it runs quicker. Additionally, for the graphs that have this data point, the graphs level off at about 128 processes, indicating that there is not much more that can be parallelized and sequential runtime is now the limiting factor. These graphs also indicate that the comp_large scales strongly with the number of processes.
+        <br/>
 
 - Sample Sort<br/>
 
