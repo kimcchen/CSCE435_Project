@@ -625,6 +625,16 @@ We will collect them using Caliper and compare them using Thicket.
         <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/speedupcomplarge28.png" width=33% alt="Speedup Graph comp_large 2^28"><br/>
         Since the Strong Scaling graphs have an inversely proportional relationship between the comp_large time and the number of processes, we would expect a proportional relationship between the comp_large Speedup and the number of processes, which is shown for every graph. Due to the extremely strong strong scaling of comp_large, using the maximum number of processes will lead to the largest speedup, which is ideal.
         <br/>
+        - <strong>main Strong Scaling Graphs</strong><br/>
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain16.png" width=33% alt="Strong Scaling Graph main 2^16">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain18.png" width=33% alt="Strong Scaling Graph main 2^18">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain20.png" width=33% alt="Strong Scaling Graph main 2^20">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain22.png" width=33% alt="Strong Scaling Graph main 2^22">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain24.png" width=33% alt="Strong Scaling Graph main 2^24">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain26.png" width=33% alt="Strong Scaling Graph main 2^26">
+        <img src="https://github.com/kimcchen/CSCE435_Project/blob/main/bitonic_sort/plots/strongscalingmain28.png" width=33% alt="Strong Scaling Graph main 2^28"><br/>
+        For smaller input sizes (2^16, 2^18, 2^20), the graphs actually show an increase in main time as the number of processes increases. This is due to the communication overhead overtaking the benefits of using more processes, as indicated by the strong scaling graphs of comm. As the input size increases, however, the graphs start to show the expected inversely proportional relationship between the time and the number of processes. Once again, the Sorted input type is the fastest for those graphs, which was indicated in the comp_large strong scaling graphs. The scaling also begins to level off at 128 processes, which was also indicated by the comp_large strong scaling graphs. This means that for the larger input sizes, the comp_large time overtakes the comm time, so the main graphs will be closer to the comp_large graphs. The graphs for the larger input sizes also indicate that main scales strongly with the number of processes.
+        <br/>
 
 - Sample Sort<br/>
     - <strong>comm Strong Scaling Graphs</strong><br/>
