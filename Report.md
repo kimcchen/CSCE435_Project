@@ -379,18 +379,18 @@ We will use the Grace cluster on the TAMU HPRC.
             end if
             
             # For each iteration, process g bits at a time (Radix Sorting)
-            max_bits <- get bits max(arr)
-            for i: 0 -> (max_bits / g) do:
-                local_bucket_counts <- counting_sort(localbuffer, g, i)
+           
+            for i: 0 -> (max digits of largest number) do:
+                local_bucket_counts <- counting_sort(localbuffer, 10, i)
         
                 # Aggregate the result of counting sort, make global count of keys per bucket
                 global_bucket_counts <- MPI all_to_all(local_bucket_counts)  
                 prefix_sums <- get prefix sums of global_bucket_counts
-                bucketed_keys <- distribute_keys(localbuffer, g, i, prefix_sums)
+                bucketed_keys <- distribute_keys(localbuffer, 10, i, prefix_sums)
 
                 # update these results to preserve order
                 exchanged_keys <- MPI all_to_all_exchange(bucketed_keys)
-                sort_by_g_bits(exchanged_keys, g, i)
+                sort_by_digits(exchanged_keys, 10, i)
                 localbuffer <- exchanged_keys
             end for
             
