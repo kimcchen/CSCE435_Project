@@ -534,7 +534,7 @@ We will collect them using Caliper and compare them using Thicket.
     ![Merge Sort Calltree](https://github.com/kimcchen/CSCE435_Project/blob/main/merge_sort/calltree.png?raw=true)  
 
 - Radix Sort Calltree  
-<img width="414" alt="Screenshot 2024-11-04 at 11 22 54 PM" src="https://github.com/user-attachments/assets/d3f1cd9a-a539-48fd-89dc-c4570f3fdd61">
+    <img width="414" alt="Screenshot 2024-11-04 at 11 22 54 PM" src="https://github.com/user-attachments/assets/d3f1cd9a-a539-48fd-89dc-c4570f3fdd61">
 
 - Column Sort Calltree  
     `data_init_X` is `data_init_runtime`  
